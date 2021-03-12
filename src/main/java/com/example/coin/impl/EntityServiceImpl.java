@@ -6,11 +6,12 @@ import com.example.coin.pojo.Entity;
 import com.example.coin.pojo.relationship;
 import com.example.coin.service.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
+@Service
 public class EntityServiceImpl implements EntityService {
     @Autowired
     private EntityRepository entityRepository;
