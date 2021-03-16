@@ -2,9 +2,11 @@ package com.example.coin.pojo;
 
 import org.neo4j.ogm.annotation.*;
 
-@RelationshipEntity
+@RelationshipEntity(type = "Relationship")
 public class relationship {
-    @Id @GeneratedValue private long id;    //id自增
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @StartNode
     private Entity from;

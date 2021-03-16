@@ -16,4 +16,5 @@ public interface EntityService {
     //增加关系
     relationship addRelationship(Entity from, Entity to, String name);
     void deleteRelationById(long fromId, long toId);
+    void deleteAll();
 }

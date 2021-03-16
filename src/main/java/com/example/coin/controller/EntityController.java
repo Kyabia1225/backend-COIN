@@ -6,16 +6,21 @@ import com.example.coin.service.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/api/entity")
 public class EntityController {
     @Autowired
     private EntityService entityService;
 
+    public EntityController(EntityService entityService) {
+        this.entityService = entityService;
+    }
+
     @RequestMapping(path = "/add", method = RequestMethod.POST)
+
     public Entity addEntity(@RequestBody Entity entity){
         return entityService.create(entity);
     }
@@ -69,7 +74,11 @@ public class EntityController {
         }
     }
 
-
+    @RequestMapping(path = "/rm", method = RequestMethod.GET)
+    public int deleteAll(){
+        entityService.deleteAll();
+        return 1;
+    }
 
 
     /*测试

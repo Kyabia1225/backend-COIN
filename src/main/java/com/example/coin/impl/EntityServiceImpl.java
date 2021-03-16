@@ -48,4 +48,9 @@ public class EntityServiceImpl implements EntityService {
     public void deleteRelationById(long fromId, long toId) {
         relationshipRepository.deleteById(fromId, toId);
     }
+
+    @Override
+    public void deleteAll() {
+        entityRepository.deleteAll();
+    }
 }
