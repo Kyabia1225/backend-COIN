@@ -15,7 +15,7 @@ public class relationship {
     @Property
     private String name;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
