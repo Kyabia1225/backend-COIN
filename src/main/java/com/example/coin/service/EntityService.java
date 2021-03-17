@@ -1,30 +1,31 @@
 package com.example.coin.service;
 
 import com.example.coin.pojo.*;
+import com.example.coin.vo.ResponseVO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface EntityService {
     //增加实体
-    Entity createEntity(Entity entity);
+    ResponseVO createEntity(Entity entity);
     //删除实体
-    void deleteEntityById(Long id);
+    ResponseVO deleteEntityById(Long id);
     //查询实体
-    Optional<Entity> findEntityById(Long id);
+    ResponseVO findEntityById(Long id);
     //获取所有实体
-    List<Entity>findAllEntities();
+    ResponseVO findAllEntities();
     //删除所有实体
-    void deleteAllEntities();
+    ResponseVO deleteAllEntities();
 
     //增加关系
-    relationship addRelationship(Entity from, Entity to, String name);
+    ResponseVO addRelationship(Entity from, Entity to, String name);
     //删除关系
-    void deleteRelationById(Long fromId, Long toId);
+    ResponseVO deleteRelationById(Long fromId, Long toId);
     //查询关系
-    Optional<relationship> findRelationById(Long id);
+    ResponseVO findRelationById(Long id);
     //获取所有关系
-    List<relationship> findAllRelationships();
+    ResponseVO findAllRelationships();
     //删除所有实体
-    void deleteAllRelationships();
+    ResponseVO deleteAllRelationships();
 }
