@@ -31,3 +31,6 @@ target/
 
 ### VS Code ###
 .vscode/
+
+### gradle ###
+.gradle/
