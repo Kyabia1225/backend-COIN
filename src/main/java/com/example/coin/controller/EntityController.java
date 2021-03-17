@@ -101,13 +101,4 @@ public class EntityController {
         return 2;
     }
 
-
-    /*测试
-    @GetMapping("/test")
-    public HashMap<String, String> test(){
-        HashMap<String, String> a = new HashMap<>();
-        a.put("Hello", "world");
-        return a;
-    }
-    */
 }

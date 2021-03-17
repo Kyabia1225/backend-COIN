@@ -1,7 +1,7 @@
 package com.example.coin.impl;
 
-import com.example.coin.dao.EntityRepository;
-import com.example.coin.dao.RelationshipRepository;
+import com.example.coin.DAO.EntityRepository;
+import com.example.coin.DAO.RelationshipRepository;
 import com.example.coin.pojo.Entity;
 import com.example.coin.pojo.relationship;
 import com.example.coin.service.EntityService;

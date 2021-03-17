@@ -1,4 +1,4 @@
-package com.example.coin.dao;
+package com.example.coin.DAO;
 
 import com.example.coin.pojo.Entity;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
