@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 
-@EnableNeo4jRepositories(basePackages = "com.example.coin.dao")
+@EnableNeo4jRepositories(basePackages = "com.example.coin.DAO")
 
 @EnableTransactionManagement // 激活SDN隐式事务
 
