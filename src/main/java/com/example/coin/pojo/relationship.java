@@ -2,6 +2,8 @@ package com.example.coin.pojo;
 
 import org.neo4j.ogm.annotation.*;
 
+import java.util.Objects;
+
 @RelationshipEntity(type = "Relationship")
 public class relationship {
     @Id
@@ -15,11 +17,11 @@ public class relationship {
     @Property
     private String name;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -66,4 +68,16 @@ public class relationship {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        relationship that = (relationship) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
 }

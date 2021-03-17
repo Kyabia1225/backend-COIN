@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/entity")
+@RequestMapping("/api/coin")
 public class EntityController {
     @Autowired
     private EntityService entityService;
@@ -19,21 +19,21 @@ public class EntityController {
         this.entityService = entityService;
     }
 
-    @RequestMapping(path = "/add", method = RequestMethod.POST)
+    @RequestMapping(path = "/addEntity", method = RequestMethod.POST)
 
     public Entity addEntity(@RequestBody Entity entity){
-        return entityService.create(entity);
+        return entityService.createEntity(entity);
     }
 
-    @RequestMapping(path = "/delete", method = RequestMethod.POST)
-    public void deleteEntityById(@RequestParam(value = "id")long id){
-        entityService.deleteById(id);
+    @RequestMapping(path = "/deleteEntity", method = RequestMethod.POST)
+    public void deleteEntityById(@RequestParam(value = "id")Long id){
+        entityService.deleteEntityById(id);
         System.out.println("删除"+id+"号实体");
     }
 
-    @RequestMapping(path = "/get", method = RequestMethod.GET)
-    public Entity getEntityById(@RequestParam(value = "id")long id){
-        Optional<Entity> optionalEntities = entityService.findById(id);
+    @RequestMapping(path = "/getEntity", method = RequestMethod.GET)
+    public Entity getEntityById(@RequestParam(value = "id")Long id){
+        Optional<Entity> optionalEntities = entityService.findEntityById(id);
         if(optionalEntities.isPresent()){
             return optionalEntities.get();
         }
@@ -42,17 +42,32 @@ public class EntityController {
         }
     }
 
-    @RequestMapping(path = "/list", method = RequestMethod.GET)
-    public List<Entity>getEntityList(){
-        return entityService.findAll();
+    @RequestMapping(path = "/getRelationship", method = RequestMethod.GET)
+    public relationship getRelationshipById(@RequestParam(value = "id")Long id){
+        Optional<relationship>optionalRelationship = entityService.findRelationById(id);
+        if(optionalRelationship.isPresent()){
+            return optionalRelationship.get();
+        }
+        else{
+            return null;
+        }
     }
 
-    @RequestMapping(path = "/addRel", method = RequestMethod.POST)
-    public relationship addRelById(@RequestParam(value = "fromId")long fromId,
-                                   @RequestParam(value = "toId")long toId,
+
+    @RequestMapping(path = "/listEntities", method = RequestMethod.GET)
+    public List<Entity>getEntityList(){
+        return entityService.findAllEntities();
+    }
+
+    @RequestMapping(path = "/listRelationships", method = RequestMethod.GET)
+    public List<relationship>getRelationList(){return entityService.findAllRelationships();}
+
+    @RequestMapping(path = "/addRelationship", method = RequestMethod.POST)
+    public relationship addRelById(@RequestParam(value = "fromId")Long fromId,
+                                   @RequestParam(value = "toId")Long toId,
                                    @RequestParam(value = "name")String name){
-        Optional<Entity>fromEntity = entityService.findById(fromId);
-        Optional<Entity>toEntity = entityService.findById(toId);
+        Optional<Entity>fromEntity = entityService.findEntityById(fromId);
+        Optional<Entity>toEntity = entityService.findEntityById(toId);
         if(fromEntity.isPresent()&&toEntity.isPresent()){
             return entityService.addRelationship(fromEntity.get(), toEntity.get(),name);
         }
@@ -61,10 +76,10 @@ public class EntityController {
         }
     }
 
-    @RequestMapping(path = "/delRel", method = RequestMethod.POST)
-    public int deleteRelById(@RequestParam(value = "fromId")long fromId, @RequestParam(value = "toId")long toId){
-        Optional<Entity>fromEntity = entityService.findById(fromId);
-        Optional<Entity>toEntity = entityService.findById(toId);
+    @RequestMapping(path = "/delReltionship", method = RequestMethod.POST)
+    public int deleteRelById(@RequestParam(value = "fromId")Long fromId, @RequestParam(value = "toId")Long toId){
+        Optional<Entity>fromEntity = entityService.findEntityById(fromId);
+        Optional<Entity>toEntity = entityService.findEntityById(toId);
         if(fromEntity.isPresent()&&toEntity.isPresent()){
             entityService.deleteRelationById(fromId, toId);
             return 1; //success
@@ -74,10 +89,16 @@ public class EntityController {
         }
     }
 
-    @RequestMapping(path = "/rm", method = RequestMethod.GET)
-    public int deleteAll(){
-        entityService.deleteAll();
+    @RequestMapping(path = "/deleteAllEntities", method = RequestMethod.GET)
+    public int deleteAllEntities(){
+        entityService.deleteAllEntities();
         return 1;
+    }
+
+    @RequestMapping(path = "/deleteAllRelationships", method = RequestMethod.GET)
+    public int deleteAllRelationships(){
+        entityService.deleteAllRelationships();
+        return 2;
     }
 
 

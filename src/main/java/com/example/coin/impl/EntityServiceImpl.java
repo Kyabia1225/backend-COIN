@@ -19,22 +19,22 @@ public class EntityServiceImpl implements EntityService {
     private RelationshipRepository relationshipRepository;
 
     @Override
-    public Entity create(Entity entity) {
+    public Entity createEntity(Entity entity) {
         return entityRepository.save(entity);
     }
 
     @Override
-    public void deleteById(long id) {
+    public void deleteEntityById(Long id) {
         entityRepository.deleteById(id);
     }
 
     @Override
-    public Optional<Entity> findById(long id) {
+    public Optional<Entity> findEntityById(Long id) {
         return entityRepository.findById(id);
     }
 
     @Override
-    public List<Entity> findAll() {
+    public List<Entity> findAllEntities() {
         return (List<Entity>)entityRepository.findAll();
     }
 
@@ -45,12 +45,27 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public void deleteRelationById(long fromId, long toId) {
+    public void deleteRelationById(Long fromId, Long toId) {
         relationshipRepository.deleteById(fromId, toId);
     }
 
     @Override
-    public void deleteAll() {
+    public Optional<relationship> findRelationById(Long id) {
+        return relationshipRepository.findById(id);
+    }
+
+    @Override
+    public void deleteAllEntities() {
         entityRepository.deleteAll();
+    }
+
+    @Override
+    public List<relationship> findAllRelationships() {
+        return (List<relationship>) relationshipRepository.findAll();
+    }
+
+    @Override
+    public void deleteAllRelationships() {
+        relationshipRepository.deleteAll();
     }
 }
