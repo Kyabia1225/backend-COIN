@@ -5,7 +5,6 @@ import com.example.coin.DAO.RelationshipRepository;
 import com.example.coin.pojo.Entity;
 import com.example.coin.pojo.relationship;
 import com.example.coin.service.EntityService;
-import com.example.coin.vo.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,101 +18,65 @@ public class EntityServiceImpl implements EntityService {
     @Autowired
     private RelationshipRepository relationshipRepository;
 
-    //错误信息
-    private static final String ENTITY_EXIST = "节点已存在";
-    private static final String ID_NOT_EXIST = "该ID不存在";
+
 
     @Override
-    public ResponseVO createEntity(Entity entity) {
-        Entity savedEntity;
-        try {
-            savedEntity = entityRepository.save(entity);
-            if(savedEntity == null)throw new Exception();
-        }catch(Exception e){
-            return ResponseVO.buildFailure(ENTITY_EXIST);
-        }
-        return ResponseVO.buildSuccess(savedEntity);
+    public Entity createEntity(Entity entity) {
+        return entityRepository.save(entity);
     }
 
     @Override
-    public ResponseVO deleteEntityById(Long id) {
+    public void deleteEntityById(Long id) {
         entityRepository.deleteById(id);
-        return ResponseVO.buildSuccess();
     }
 
     @Override
-    public ResponseVO findEntityById(Long id) {
-        Entity foundEntity;
-        try{
-            Optional<Entity>optionalEntity =  entityRepository.findById(id);
-            if(optionalEntity.isPresent()){
-                foundEntity = optionalEntity.get();
-            }else{
-                throw new Exception();
-            }
-        }catch(Exception e){
-            return ResponseVO.buildFailure(ID_NOT_EXIST);
+    public Entity findEntityById(Long id) {
+        Optional<Entity>optionalEntity =  entityRepository.findById(id);
+        if(optionalEntity.isPresent()){
+            return optionalEntity.get();
         }
-        return ResponseVO.buildSuccess(foundEntity);
+        else return null;
     }
 
     @Override
-    public ResponseVO findAllEntities() {
-        return ResponseVO.buildSuccess((List<Entity>)entityRepository.findAll());
+    public List<Entity> findAllEntities() {
+        return (List<Entity>) entityRepository.findAll();
     }
 
     @Override
-    public ResponseVO addRelationship(Entity from, Entity to, String name) {
+    public relationship addRelationship(Entity from, Entity to, String name) {
         relationship rel = new relationship(from, to, name);
-        try{
-            relationship verify = relationshipRepository.save(rel);
-            if(verify == null)throw new Exception();
-        }catch(Exception e){
-            return ResponseVO.buildFailure(ENTITY_EXIST);
-        }
-        return ResponseVO.buildSuccess(rel);
+        return relationshipRepository.save(rel);
     }
 
     @Override
-    public ResponseVO deleteRelationById(Long fromId, Long toId) {
-        try{
-            relationshipRepository.deleteById(fromId, toId);
-        }catch (Exception e){
-            return ResponseVO.buildFailure(ID_NOT_EXIST);
-        }
-        return ResponseVO.buildSuccess();
+    public void deleteRelationById(Long fromId, Long toId) {
+        relationshipRepository.deleteById(fromId, toId);
     }
 
     @Override
-    public ResponseVO findRelationById(Long id) {
-        relationship foundRel;
-        try{
-            Optional<relationship> rel = relationshipRepository.findById(id);
-            if(rel.isPresent()){
-                foundRel = rel.get();
-            }else{
-                throw new Exception();
-            }
-        }catch (Exception e){
-            return ResponseVO.buildFailure(ID_NOT_EXIST);
+    public relationship findRelationById(Long id) {
+        Optional<relationship> optionalRel = relationshipRepository.findById(id);
+        if(optionalRel.isPresent()){
+            return optionalRel.get();
+        }else{
+            return null;
         }
-        return ResponseVO.buildSuccess(foundRel);
     }
 
     @Override
-    public ResponseVO deleteAllEntities() {
+    public void deleteAllEntities() {
         entityRepository.deleteAll();
-        return ResponseVO.buildSuccess();
     }
 
     @Override
-    public ResponseVO findAllRelationships() {
-        return ResponseVO.buildSuccess((List<relationship>) relationshipRepository.findAll());
+    public List<relationship> findAllRelationships() {
+        return (List<relationship>) relationshipRepository.findAll();
     }
 
     @Override
-    public ResponseVO deleteAllRelationships() {
+    public void deleteAllRelationships() {
         relationshipRepository.deleteAll();
-        return ResponseVO.buildSuccess();
     }
 }
