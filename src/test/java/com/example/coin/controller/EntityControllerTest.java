@@ -53,6 +53,7 @@ class EntityControllerTest {
         String content = mvcResult.getResponse().getContentAsString();
 
         assertEquals(200, status);
+        assertTrue(content.contains("true"));
         System.out.println(content);
     }
 

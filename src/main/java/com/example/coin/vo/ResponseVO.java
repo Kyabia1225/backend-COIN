@@ -4,10 +4,11 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j; //log.info()
 
+import java.io.Serializable;
 
 @Data
 @Slf4j
-public class ResponseVO {
+public class ResponseVO implements Serializable {
     @NonNull
     private Boolean success;
     private String message;

@@ -2,6 +2,7 @@ package com.example.coin.pojo;
 
 import lombok.*;
 import org.neo4j.ogm.annotation.*;
+import java.io.Serializable;
 
 @Data
 @ToString(exclude = "id")
@@ -9,7 +10,7 @@ import org.neo4j.ogm.annotation.*;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @RelationshipEntity(type = "Relationship")
-public class relationship {
+public class relationship implements Serializable {
     @Id
     @GeneratedValue
     private Long id;

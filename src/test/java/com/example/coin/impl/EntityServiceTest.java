@@ -3,7 +3,6 @@ package com.example.coin.impl;
 import com.example.coin.pojo.Entity;
 import com.example.coin.pojo.relationship;
 import com.example.coin.service.EntityService;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
