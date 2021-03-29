@@ -72,17 +72,12 @@ public class EntityController {
 
     @RequestMapping(path = "/listEntities", method = RequestMethod.GET)
     public ResponseVO getEntityList(){
-        List<Entity>allEntities = (List<Entity>) redisUtil.get(ENTITY_REDIS_PREFIX + "list");
-        if(allEntities == null) {
-            allEntities = entityService.findAllEntities();
-        }
-        redisUtil.set(ENTITY_REDIS_PREFIX+"list", allEntities);
+        List<Entity> allEntities = entityService.findAllEntities();
         return ResponseVO.buildSuccess(allEntities);
     }
 
     @RequestMapping(path = "/deleteAllEntities", method = RequestMethod.GET)
     public ResponseVO deleteAllEntities(){
-        redisUtil.del(ENTITY_REDIS_PREFIX+"list");
         entityService.deleteAllEntities();
         return ResponseVO.buildSuccess();
     }

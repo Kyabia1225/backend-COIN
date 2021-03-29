@@ -67,16 +67,6 @@ public class RelationshipController {
         return ResponseVO.buildSuccess(newRel);
     }
 
-    @RequestMapping(path = "/listRelationships", method = RequestMethod.GET)
-    public ResponseVO getRelationList(){
-        List<relationship> allRelationships = (List<relationship>) redisUtil.get(RELATIONSHIP_REDIS_PREFIX+"list");
-        if(allRelationships == null) {
-            allRelationships = relationshipService.findAllRelationships();
-        }
-        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+"list", allRelationships);
-        return ResponseVO.buildSuccess(allRelationships);
-    }
-
     @RequestMapping(path = "/delRelationship", method = RequestMethod.POST)
     public ResponseVO deleteRelById(@RequestParam(value = "fromId")Long fromId, @RequestParam(value = "toId")Long toId){
         Entity entity1, entity2;
@@ -96,6 +86,12 @@ public class RelationshipController {
         redisUtil.del(RELATIONSHIP_REDIS_PREFIX+fromId+"-"+toId);
         relationshipService.deleteRelationById(fromId, toId);
         return ResponseVO.buildSuccess();
+    }
+
+    @RequestMapping(path = "/listRelationships", method = RequestMethod.GET)
+    public ResponseVO getRelationList(){
+        List<relationship> allRelationships = relationshipService.findAllRelationships();
+        return ResponseVO.buildSuccess(allRelationships);
     }
 
     @RequestMapping(path = "/deleteAllRelationships", method = RequestMethod.GET)
