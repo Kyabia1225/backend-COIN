@@ -3,6 +3,7 @@ package com.example.coin.impl;
 import com.example.coin.pojo.Entity;
 import com.example.coin.pojo.relationship;
 import com.example.coin.service.EntityService;
+import com.example.coin.service.RelationshipService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class EntityServiceTest {
     @Autowired
     private EntityService entityService;
+    @Autowired
+    private RelationshipService relationshipService;
 
     @Test
     void createEntity() {
@@ -55,7 +58,7 @@ class EntityServiceTest {
     void addRelationship() {
         Entity entity1 = new Entity("from");
         Entity entity2 = new Entity("to");
-        relationship rel = entityService.addRelationship(entity1, entity2, "connects");
+        relationship rel = relationshipService.addRelationship(entity1, entity2, "connects");
         assertNotNull(rel);
     }
 
@@ -63,19 +66,19 @@ class EntityServiceTest {
     void findRelationById() {
         Entity entity1 = new Entity("from");
         Entity entity2 = new Entity("to");
-        relationship rel = entityService.addRelationship(entity1, entity2, "connects");
+        relationship rel = relationshipService.addRelationship(entity1, entity2, "connects");
         Long relId = rel.getId();
-        assertNotNull(entityService.findRelationById(relId));
+        assertNotNull(relationshipService.findRelationById(relId));
     }
 
     @Test
     void deleteRelationById() {
         Entity entity1 = new Entity("from");
         Entity entity2 = new Entity("to");
-        relationship rel = entityService.addRelationship(entity1, entity2, "connects");
+        relationship rel = relationshipService.addRelationship(entity1, entity2, "connects");
         Long relId = rel.getId();
-        entityService.deleteRelationById(entity1.getId(), entity2.getId());
-        assertNull(entityService.findRelationById(relId));
+        relationshipService.deleteRelationById(entity1.getId(), entity2.getId());
+        assertNull(relationshipService.findRelationById(relId));
     }
 
 
@@ -90,13 +93,13 @@ class EntityServiceTest {
     void findAllRelationships() {
         Entity entity1 = new Entity("from");
         Entity entity2 = new Entity("to");
-        entityService.addRelationship(entity1, entity2, "connects");
-        assertTrue(entityService.findAllRelationships().size()>0);
+        relationshipService.addRelationship(entity1, entity2, "connects");
+        assertTrue(relationshipService.findAllRelationships().size()>0);
     }
 
     @Test
     void deleteAllRelationships() {
-        entityService.deleteAllRelationships();
-        assertEquals(0, entityService.findAllRelationships().size());
+        relationshipService.deleteAllRelationships();
+        assertEquals(0, relationshipService.findAllRelationships().size());
     }
 }

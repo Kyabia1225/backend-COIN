@@ -15,10 +15,6 @@ import java.util.Optional;
 public class EntityServiceImpl implements EntityService {
     @Autowired
     private EntityRepository entityRepository;
-    @Autowired
-    private RelationshipRepository relationshipRepository;
-
-
 
     @Override
     public Entity createEntity(Entity entity) {
@@ -45,38 +41,8 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public relationship addRelationship(Entity from, Entity to, String name) {
-        relationship rel = new relationship(from, to, name);
-        return relationshipRepository.save(rel);
-    }
-
-    @Override
-    public void deleteRelationById(Long fromId, Long toId) {
-        relationshipRepository.deleteById(fromId, toId);
-    }
-
-    @Override
-    public relationship findRelationById(Long id) {
-        Optional<relationship> optionalRel = relationshipRepository.findById(id);
-        if(optionalRel.isPresent()){
-            return optionalRel.get();
-        }else{
-            return null;
-        }
-    }
-
-    @Override
     public void deleteAllEntities() {
         entityRepository.deleteAll();
     }
 
-    @Override
-    public List<relationship> findAllRelationships() {
-        return (List<relationship>) relationshipRepository.findAll();
-    }
-
-    @Override
-    public void deleteAllRelationships() {
-        relationshipRepository.deleteAll();
-    }
 }

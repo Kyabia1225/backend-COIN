@@ -1,4 +1,4 @@
-package com.example.coin.vo;
+package com.example.coin.util;
 
 import lombok.Data;
 import lombok.NonNull;
