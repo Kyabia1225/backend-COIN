@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
 
 
-
 class EntityServiceTest {
     @Autowired
     private EntityService entityService;

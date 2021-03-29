@@ -52,9 +52,8 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>1.2.62</version>
+			<version>1.2.58</version>
 		</dependency>
-
 		<!--引入redis相关依赖-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -67,7 +66,7 @@
             <version>2.3.2.RELEASE</version>
         </dependency>
 
-    </dependencies>
+	</dependencies>
 
 	<build>
 		<plugins>

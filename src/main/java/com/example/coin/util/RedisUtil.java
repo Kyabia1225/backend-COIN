@@ -18,6 +18,9 @@ public final class RedisUtil {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+    public static final String ENTITY_REDIS_PREFIX = "entity:";
+    public static final String RELATIONSHIP_REDIS_PREFIX = "relationship:";
+    public static final long TWO_HOURS_IN_SECOND = 2 * 60 * 60;    //两小时
 
     // =============================common============================
 

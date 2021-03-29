@@ -2,6 +2,7 @@ package com.example.coin.DAO;
 
 import com.example.coin.pojo.Entity;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;

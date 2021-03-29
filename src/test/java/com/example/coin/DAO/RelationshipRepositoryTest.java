@@ -3,6 +3,7 @@ package com.example.coin.DAO;
 import com.example.coin.pojo.Entity;
 import com.example.coin.pojo.relationship;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -17,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.JVM)
-
 class RelationshipRepositoryTest {
     @Autowired
     RelationshipRepository relationshipRepository;

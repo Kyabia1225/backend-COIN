@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.coin.util.RedisUtil.ENTITY_REDIS_PREFIX;
+import static com.example.coin.util.RedisUtil.TWO_HOURS_IN_SECOND;
+
 @RestController
 @RequestMapping("/api/coin")
 public class EntityController {
@@ -35,35 +38,51 @@ public class EntityController {
         }catch (Exception exception){
             return ResponseVO.buildFailure(ENTITY_EXIST);
         }
+        //加入缓存
+        redisUtil.set(ENTITY_REDIS_PREFIX+e.getId(), e);
+        //设置缓存时长
+        redisUtil.expire(ENTITY_REDIS_PREFIX+e.getId(), TWO_HOURS_IN_SECOND);
         return ResponseVO.buildSuccess(e);
     }
 
     @RequestMapping(path = "/deleteEntity", method = RequestMethod.POST)
     public ResponseVO deleteEntityById(@RequestParam(value = "id")Long id){
+        redisUtil.del(ENTITY_REDIS_PREFIX+id);
         entityService.deleteEntityById(id);
         return ResponseVO.buildSuccess();
     }
 
     @RequestMapping(path = "/getEntity", method = RequestMethod.GET)
     public ResponseVO getEntityById(@RequestParam(value = "id")Long id){
-        Entity e;
+        //尝试加载缓存
+        Entity e = (Entity) redisUtil.get(ENTITY_REDIS_PREFIX+id);
+        if(e!=null)return ResponseVO.buildSuccess(e);
+        //缓存中找不到
         try{
             e = entityService.findEntityById(id);
             if(e == null)throw new Exception();
         }catch (Exception exception){
             return ResponseVO.buildFailure(ID_NOT_EXIST);
         }
+        //加载到缓存中
+        redisUtil.set(ENTITY_REDIS_PREFIX+id, e);
+        redisUtil.expire(ENTITY_REDIS_PREFIX+id, TWO_HOURS_IN_SECOND);
         return ResponseVO.buildSuccess(e);
     }
 
     @RequestMapping(path = "/listEntities", method = RequestMethod.GET)
     public ResponseVO getEntityList(){
-        List<Entity> allEntities = entityService.findAllEntities();
+        List<Entity>allEntities = (List<Entity>) redisUtil.get(ENTITY_REDIS_PREFIX + "list");
+        if(allEntities == null) {
+            allEntities = entityService.findAllEntities();
+        }
+        redisUtil.set(ENTITY_REDIS_PREFIX+"list", allEntities);
         return ResponseVO.buildSuccess(allEntities);
     }
 
     @RequestMapping(path = "/deleteAllEntities", method = RequestMethod.GET)
     public ResponseVO deleteAllEntities(){
+        redisUtil.del(ENTITY_REDIS_PREFIX+"list");
         entityService.deleteAllEntities();
         return ResponseVO.buildSuccess();
     }

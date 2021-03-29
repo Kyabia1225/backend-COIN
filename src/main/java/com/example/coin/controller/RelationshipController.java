@@ -8,14 +8,16 @@ import com.example.coin.service.RelationshipService;
 import com.example.coin.util.RedisUtil;
 import com.example.coin.util.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
+import static com.example.coin.util.RedisUtil.RELATIONSHIP_REDIS_PREFIX;
+import static com.example.coin.util.RedisUtil.ENTITY_REDIS_PREFIX;
+import static com.example.coin.util.RedisUtil.TWO_HOURS_IN_SECOND;
 
-@RestController
+@Controller
 @RequestMapping("/api/coin")
 public class RelationshipController {
     @Autowired
@@ -41,36 +43,57 @@ public class RelationshipController {
         return ResponseVO.buildSuccess(r);
     }
 
-    @RequestMapping(path = "/listRelationships", method = RequestMethod.GET)
-    public ResponseVO getRelationList(){
-        List<relationship> allRelationships = relationshipService.findAllRelationships();
-        return ResponseVO.buildSuccess(allRelationships);
-    }
     @RequestMapping(path = "/addRelationship", method = RequestMethod.POST)
     public ResponseVO addRelById(@RequestParam(value = "fromId")Long fromId,
                                  @RequestParam(value = "toId")Long toId,
                                  @RequestParam(value = "name")String name){
         Entity entity1, entity2;
         try{
-            entity1 = entityService.findEntityById(fromId);
-            entity2 = entityService.findEntityById(toId);
+            entity1 = (Entity) redisUtil.get(ENTITY_REDIS_PREFIX+fromId);
+            if(entity1 == null) entity1 = entityService.findEntityById(fromId);
+            entity2 = (Entity) redisUtil.get(ENTITY_REDIS_PREFIX+toId);
+            if(entity2 == null) entity2 = entityService.findEntityById(toId);
             if(entity1 == null || entity2 == null)throw new Exception();
         }catch (Exception exception){
             return ResponseVO.buildFailure(ID_NOT_EXIST);
         }
-        return ResponseVO.buildSuccess(relationshipService.addRelationship(entity1, entity2, name));
+        redisUtil.set(ENTITY_REDIS_PREFIX+fromId, entity1);
+        redisUtil.expire(ENTITY_REDIS_PREFIX+fromId, TWO_HOURS_IN_SECOND);
+        redisUtil.set(ENTITY_REDIS_PREFIX+toId, entity2);
+        redisUtil.expire(ENTITY_REDIS_PREFIX+toId, TWO_HOURS_IN_SECOND);
+        relationship newRel = relationshipService.addRelationship(entity1, entity2, name);
+        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+fromId+"-"+toId, newRel);
+        redisUtil.expire(RELATIONSHIP_REDIS_PREFIX+fromId+"-"+toId, TWO_HOURS_IN_SECOND);
+        return ResponseVO.buildSuccess(newRel);
+    }
+
+    @RequestMapping(path = "/listRelationships", method = RequestMethod.GET)
+    public ResponseVO getRelationList(){
+        List<relationship> allRelationships = (List<relationship>) redisUtil.get(RELATIONSHIP_REDIS_PREFIX+"list");
+        if(allRelationships == null) {
+            allRelationships = relationshipService.findAllRelationships();
+        }
+        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+"list", allRelationships);
+        return ResponseVO.buildSuccess(allRelationships);
     }
 
     @RequestMapping(path = "/delRelationship", method = RequestMethod.POST)
     public ResponseVO deleteRelById(@RequestParam(value = "fromId")Long fromId, @RequestParam(value = "toId")Long toId){
         Entity entity1, entity2;
         try{
-            entity1 = entityService.findEntityById(fromId);
-            entity2 = entityService.findEntityById(toId);
+            entity1 = (Entity) redisUtil.get(ENTITY_REDIS_PREFIX+fromId);
+            if(entity1 == null) entity1 = entityService.findEntityById(fromId);
+            entity2 = (Entity) redisUtil.get(ENTITY_REDIS_PREFIX+toId);
+            if(entity2 == null) entity2 = entityService.findEntityById(toId);
             if(entity1 == null || entity2 == null)throw new Exception();
         }catch (Exception exception){
             return ResponseVO.buildFailure(ID_NOT_EXIST);
         }
+        redisUtil.set(ENTITY_REDIS_PREFIX+fromId, entity1);
+        redisUtil.expire(ENTITY_REDIS_PREFIX+fromId, TWO_HOURS_IN_SECOND);
+        redisUtil.set(ENTITY_REDIS_PREFIX+toId, entity2);
+        redisUtil.expire(ENTITY_REDIS_PREFIX+toId, TWO_HOURS_IN_SECOND);
+        redisUtil.del(RELATIONSHIP_REDIS_PREFIX+fromId+"-"+toId);
         relationshipService.deleteRelationById(fromId, toId);
         return ResponseVO.buildSuccess();
     }
