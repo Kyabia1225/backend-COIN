@@ -24,11 +24,6 @@ public class EntityController {
     private static final String ENTITY_EXIST = "该实体节点已存在";
     private static final String ID_NOT_EXIST = "该实体节点ID不存在";
 
-
-    public EntityController(EntityService entityService) {
-        this.entityService = entityService;
-    }
-
     @RequestMapping(path = "/addEntity", method = RequestMethod.POST)
     public ResponseVO addEntity(@RequestBody Entity entity){
         Entity e;
