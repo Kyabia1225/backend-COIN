@@ -1,7 +1,9 @@
 package com.example.coin.pojo;
 
 import lombok.*;
-import org.neo4j.ogm.annotation.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.io.Serializable;
 
 @Data
@@ -9,19 +11,15 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @NoArgsConstructor
 @RequiredArgsConstructor
-@RelationshipEntity(type = "Relationship")
+
+@Document(collection = "relationships")
 public class relationship implements Serializable {
     @Id
-    @GeneratedValue
-    private Long id;
-
-    @StartNode
+    private String id;
     @NonNull
-    private Entity from;
-    @EndNode
+    private String from;
     @NonNull
-    private Entity to;
-    @Property
+    private String to;
     @NonNull
-    private String name;
+    private String relationship;
 }

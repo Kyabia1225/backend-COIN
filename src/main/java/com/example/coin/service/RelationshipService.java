@@ -8,11 +8,14 @@ import java.util.List;
 public interface RelationshipService {
 
     //增加关系
-    relationship addRelationship(Entity from, Entity to, String name);
+    relationship addRelationship(String from, String to, String name);
+    relationship addRelationship(relationship each);
     //删除关系
-    void deleteRelationById(Long fromId, Long toId);
+    void deleteRelationById(String fromId, String toId);
     //查询关系
-    relationship findRelationById(Long id);
+    relationship findRelationById(String id);
+    //更新关系
+    void updateRelationshipById(String id, relationship r);
     //获取所有关系
     List<relationship> findAllRelationships();
     //删除所有关系

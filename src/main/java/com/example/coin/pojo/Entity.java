@@ -1,20 +1,29 @@
 package com.example.coin.pojo;
+
 import lombok.*;
-import org.neo4j.ogm.annotation.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.HashMap;
+
 @Data
-@NoArgsConstructor
 @ToString(exclude = "id")
 @EqualsAndHashCode
+@NoArgsConstructor
 @RequiredArgsConstructor
-@NodeEntity(label = "Entity")
+
+@Document(collection = "entities")
 public class Entity implements Serializable {
     @Id
-    @GeneratedValue
-    private Long id;
-
-    @Property(name = "name")
+    private String id;
     @NonNull
     private String name;
+    //fx, fy用来存储节点位置
+    private Double fx;
+    private Double fy;
+    //节点属性（键值对形式）
+    private HashMap<String, String> properties;
+    private String type;
+
 }

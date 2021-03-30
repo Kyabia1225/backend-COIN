@@ -8,16 +8,14 @@ import com.example.coin.service.RelationshipService;
 import com.example.coin.util.RedisUtil;
 import com.example.coin.util.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import static com.example.coin.util.RedisUtil.RELATIONSHIP_REDIS_PREFIX;
 import static com.example.coin.util.RedisUtil.ENTITY_REDIS_PREFIX;
 import static com.example.coin.util.RedisUtil.TWO_HOURS_IN_SECOND;
 
-@Controller
+@RestController
 @RequestMapping("/api/coin")
 public class RelationshipController {
     @Autowired
@@ -25,14 +23,14 @@ public class RelationshipController {
     @Autowired
     private EntityService entityService;
     @Autowired
-    RedisUtil redisUtil;
+    private RedisUtil redisUtil;
 
     //错误信息
     private static final String ENTITY_EXIST = "该关系节点已存在";
     private static final String ID_NOT_EXIST = "该关系节点ID不存在";
 
     @RequestMapping(path = "/getRelationship", method = RequestMethod.GET)
-    public ResponseVO getRelationshipById(@RequestParam(value = "id")Long id){
+    public ResponseVO getRelationshipById(@RequestParam(value = "id")String id){
         relationship r;
         try{
             r = relationshipService.findRelationById(id);
@@ -44,8 +42,8 @@ public class RelationshipController {
     }
 
     @RequestMapping(path = "/addRelationship", method = RequestMethod.POST)
-    public ResponseVO addRelById(@RequestParam(value = "fromId")Long fromId,
-                                 @RequestParam(value = "toId")Long toId,
+    public ResponseVO addRelById(@RequestParam(value = "fromId")String fromId,
+                                 @RequestParam(value = "toId")String toId,
                                  @RequestParam(value = "name")String name){
         Entity entity1, entity2;
         try{
@@ -61,14 +59,14 @@ public class RelationshipController {
         redisUtil.expire(ENTITY_REDIS_PREFIX+fromId, TWO_HOURS_IN_SECOND);
         redisUtil.set(ENTITY_REDIS_PREFIX+toId, entity2);
         redisUtil.expire(ENTITY_REDIS_PREFIX+toId, TWO_HOURS_IN_SECOND);
-        relationship newRel = relationshipService.addRelationship(entity1, entity2, name);
+        relationship newRel = relationshipService.addRelationship(fromId, toId, name);
         redisUtil.set(RELATIONSHIP_REDIS_PREFIX+fromId+"-"+toId, newRel);
         redisUtil.expire(RELATIONSHIP_REDIS_PREFIX+fromId+"-"+toId, TWO_HOURS_IN_SECOND);
         return ResponseVO.buildSuccess(newRel);
     }
 
     @RequestMapping(path = "/delRelationship", method = RequestMethod.POST)
-    public ResponseVO deleteRelById(@RequestParam(value = "fromId")Long fromId, @RequestParam(value = "toId")Long toId){
+    public ResponseVO deleteRelById(@RequestParam(value = "fromId")String fromId, @RequestParam(value = "toId")String toId){
         Entity entity1, entity2;
         try{
             entity1 = (Entity) redisUtil.get(ENTITY_REDIS_PREFIX+fromId);
@@ -98,5 +96,19 @@ public class RelationshipController {
     public ResponseVO deleteAllRelationships(){
         relationshipService.deleteAllRelationships();
         return ResponseVO.buildSuccess();
+    }
+
+    @RequestMapping(path = "/updateRelationship", method = RequestMethod.POST)
+    public ResponseVO updateRelationship(@RequestParam(value = "id")String id, @RequestBody relationship rel){
+        relationshipService.updateRelationshipById(id, rel);
+        return ResponseVO.buildSuccess();
+    }
+
+    @RequestMapping(path = "/relFinalProcess", method = RequestMethod.POST)
+    public void relationshipFinalProcess(@RequestBody List<relationship>allRels){
+        relationshipService.deleteAllRelationships();
+        for(relationship each:allRels){
+            relationshipService.addRelationship(each);
+        }
     }
 }

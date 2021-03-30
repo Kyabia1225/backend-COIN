@@ -1,4 +1,4 @@
-package com.example.coin.impl;
+package com.example.coin.service.impl;
 
 import com.example.coin.DAO.RelationshipRepository;
 import com.example.coin.pojo.Entity;
@@ -16,25 +16,38 @@ public class RelationshipServiceImpl implements RelationshipService {
     @Autowired
     private RelationshipRepository relationshipRepository;
 
+
     @Override
-    public relationship addRelationship(Entity from, Entity to, String name) {
+    public relationship addRelationship(String from, String to, String name) {
         relationship rel = new relationship(from, to, name);
+        return relationshipRepository.save(rel);
+    }
+    public relationship addRelationship(relationship rel) {
         return relationshipRepository.save(rel);
     }
 
     @Override
-    public void deleteRelationById(Long fromId, Long toId) {
+    public void deleteRelationById(String fromId, String toId) {
         relationshipRepository.deleteById(fromId, toId);
     }
 
     @Override
-    public relationship findRelationById(Long id) {
+    public relationship findRelationById(String id) {
         Optional<relationship> optionalRel = relationshipRepository.findById(id);
         if(optionalRel.isPresent()){
             return optionalRel.get();
         }else{
             return null;
         }
+    }
+
+    //使用这个方法请务必保证id存在！
+    @Override
+    public void updateRelationshipById(String id, relationship r) {
+        relationship rel = findRelationById(id);
+        rel.setRelationship(r.getRelationship());
+        rel.setFrom(r.getFrom());
+        rel.setTo(r.getTo());
     }
 
     @Override

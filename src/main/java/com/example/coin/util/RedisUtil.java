@@ -572,5 +572,11 @@ public final class RedisUtil {
             return 0;
         }
     }
-
+    /**
+     * 删除当前数据库
+     */
+    public void flushdb(){
+        Set<String> keys = redisTemplate.keys("*");
+        redisTemplate.delete(keys);
+    }
 }

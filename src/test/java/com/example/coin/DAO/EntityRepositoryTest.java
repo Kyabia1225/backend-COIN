@@ -1,3 +1,4 @@
+/*
 package com.example.coin.DAO;
 
 import com.example.coin.pojo.Entity;
@@ -55,4 +56,4 @@ class EntityRepositoryTest {
         entityRepository.deleteAll();
         assertTrue(((List<Entity>)entityRepository.findAll()).size() == 0);
     }
-}
+}*/

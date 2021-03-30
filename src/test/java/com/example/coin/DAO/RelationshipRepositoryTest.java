@@ -1,3 +1,4 @@
+/*
 package com.example.coin.DAO;
 
 import com.example.coin.pojo.Entity;
@@ -65,4 +66,4 @@ class RelationshipRepositoryTest {
         assertTrue(((List<relationship>)relationshipRepository.findAll()).size() == 0);
     }
 
-}
+}*/

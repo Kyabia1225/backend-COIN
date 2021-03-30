@@ -18,7 +18,7 @@ public class EntityController {
     @Autowired
     private EntityService entityService;
     @Autowired
-    RedisUtil redisUtil;
+    private RedisUtil redisUtil;
 
     //错误信息
     private static final String ENTITY_EXIST = "该实体节点已存在";
@@ -46,14 +46,14 @@ public class EntityController {
     }
 
     @RequestMapping(path = "/deleteEntity", method = RequestMethod.POST)
-    public ResponseVO deleteEntityById(@RequestParam(value = "id")Long id){
+    public ResponseVO deleteEntityById(@RequestParam(value = "id")String id){
         redisUtil.del(ENTITY_REDIS_PREFIX+id);
         entityService.deleteEntityById(id);
         return ResponseVO.buildSuccess();
     }
 
     @RequestMapping(path = "/getEntity", method = RequestMethod.GET)
-    public ResponseVO getEntityById(@RequestParam(value = "id")Long id){
+    public ResponseVO getEntityById(@RequestParam(value = "id")String id){
         //尝试加载缓存
         Entity e = (Entity) redisUtil.get(ENTITY_REDIS_PREFIX+id);
         if(e!=null)return ResponseVO.buildSuccess(e);
@@ -80,6 +80,21 @@ public class EntityController {
     public ResponseVO deleteAllEntities(){
         entityService.deleteAllEntities();
         return ResponseVO.buildSuccess();
+    }
+
+    @RequestMapping(path = "/updateEntity", method = RequestMethod.POST)
+    public ResponseVO updateEntity(@RequestParam(value = "id")String id, @RequestBody Entity entity){
+        entityService.updateEntityById(id, entity);
+        return ResponseVO.buildSuccess();
+    }
+
+    @RequestMapping(path = "/entityFinalProcess", method = RequestMethod.POST)
+    public void entityFinalProcess(@RequestBody List<Entity>allEntities){
+        redisUtil.flushdb();
+        entityService.deleteAllEntities();
+        for(Entity each:allEntities){
+            entityService.createEntity(each);
+        }
     }
 
 }
