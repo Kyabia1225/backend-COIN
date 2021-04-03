@@ -51,11 +51,20 @@ public class RelationshipController {
         return ResponseVO.buildSuccess(newRel);
     }
 
-    @RequestMapping(path = "/delRelationship", method = RequestMethod.POST)
-    public ResponseVO deleteRelById(@RequestParam(value = "fromId")String fromId, @RequestParam(value = "toId")String toId){
-        if (someEntityIsNull(fromId, toId)) return ResponseVO.buildFailure(ID_NOT_EXIST);
-        redisUtil.del(RELATIONSHIP_REDIS_PREFIX+fromId+"-"+toId);
-        relationshipService.deleteRelationById(fromId, toId);
+    @RequestMapping(path = "/delRelationship1", method = RequestMethod.POST)
+    public ResponseVO deleteRelById(@RequestParam(value = "source")String source, @RequestParam(value = "target")String target){
+        if (someEntityIsNull(source, target)) return ResponseVO.buildFailure(ID_NOT_EXIST);
+        redisUtil.del(RELATIONSHIP_REDIS_PREFIX+source+"-"+target);
+        relationshipService.deleteRelationById(source, target);
+        return ResponseVO.buildSuccess();
+    }
+
+    @RequestMapping(path = "/delRelationship2", method = RequestMethod.POST)
+    public ResponseVO deleteRelById(@RequestParam(value = "id")String id){
+        relationship rel = relationshipService.findRelationById(id);
+        if(rel == null) return ResponseVO.buildFailure(ID_NOT_EXIST);
+        redisUtil.del(RELATIONSHIP_REDIS_PREFIX+rel.getFrom()+"-"+rel.getTo());
+        relationshipService.deleteRelationById(id);
         return ResponseVO.buildSuccess();
     }
 
@@ -73,17 +82,13 @@ public class RelationshipController {
 
     @RequestMapping(path = "/updateRelationship", method = RequestMethod.POST)
     public ResponseVO updateRelationship(@RequestParam(value = "id")String id, @RequestBody relationship rel){
+        if(relationshipService.findRelationById(id) == null)return ResponseVO.buildFailure(ID_NOT_EXIST);
         relationshipService.updateRelationshipById(id, rel);
+        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+rel.getFrom()+"-"+rel.getTo(), rel);
+        redisUtil.expire(RELATIONSHIP_REDIS_PREFIX+rel.getFrom()+"-"+rel.getTo(), TWO_HOURS_IN_SECOND);
         return ResponseVO.buildSuccess();
     }
 
-    @RequestMapping(path = "/relFinalProcess", method = RequestMethod.POST)
-    public void relationshipFinalProcess(@RequestBody List<relationship>allRels){
-        relationshipService.deleteAllRelationships();
-        for(relationship each:allRels){
-            relationshipService.addRelationship(each);
-        }
-    }
     //extract addRelById和deleteRelById中的重复代码成方法
     private boolean someEntityIsNull(@RequestParam("fromId") String fromId, @RequestParam("toId") String toId) {
         Entity entity1, entity2;

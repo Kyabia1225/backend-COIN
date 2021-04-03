@@ -32,6 +32,11 @@ public class RelationshipServiceImpl implements RelationshipService {
     }
 
     @Override
+    public void deleteRelationById(String id) {
+        relationshipRepository.deleteById(id);
+    }
+
+    @Override
     public relationship findRelationById(String id) {
         Optional<relationship> optionalRel = relationshipRepository.findById(id);
         if(optionalRel.isPresent()){

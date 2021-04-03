@@ -25,5 +25,5 @@ public class Entity implements Serializable {
     //节点属性（键值对形式）
     private HashMap<String, String> properties;
     private String type;
-
+    //todo: 需要记录和该节点有关的节点与关系
 }

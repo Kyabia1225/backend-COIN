@@ -83,13 +83,5 @@ public class EntityController {
         return ResponseVO.buildSuccess();
     }
 
-    @RequestMapping(path = "/entityFinalProcess", method = RequestMethod.POST)
-    public void entityFinalProcess(@RequestBody List<Entity>allEntities){
-        redisUtil.flushdb();
-        entityService.deleteAllEntities();
-        for(Entity each:allEntities){
-            entityService.createEntity(each);
-        }
-    }
 
 }

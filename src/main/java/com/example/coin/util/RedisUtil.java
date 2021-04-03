@@ -579,4 +579,7 @@ public final class RedisUtil {
         Set<String> keys = redisTemplate.keys("*");
         redisTemplate.delete(keys);
     }
+    public Set<String> getKeys(){
+        return redisTemplate.keys("*");
+    }
 }
