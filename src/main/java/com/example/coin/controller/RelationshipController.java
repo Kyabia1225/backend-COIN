@@ -26,37 +26,34 @@ public class RelationshipController {
     private RedisUtil redisUtil;
 
     //错误信息
-    private static final String ID_NOT_EXIST = "该关系节点ID不存在";
-
+    private static final String ID_NOT_EXIST = "节点ID不存在";
+    private static final String REL_NOT_EXIST = "或两实体节点间不存在这样的关系";
     @RequestMapping(path = "/getRelationship", method = RequestMethod.GET)
     public ResponseVO getRelationshipById(@RequestParam(value = "id")String id){
-        relationship r;
-        try{
-            r = relationshipService.findRelationById(id);
-            if(r == null) throw new Exception();
-        }catch (Exception exception){
-            return ResponseVO.buildFailure(ID_NOT_EXIST);
-        }
-        return ResponseVO.buildSuccess(r);
+        relationship r = relationshipService.findRelationById(id);
+        if(r == null) return ResponseVO.buildFailure(ID_NOT_EXIST);
+        else return ResponseVO.buildSuccess(r);
     }
 
     @RequestMapping(path = "/addRelationship", method = RequestMethod.POST)
     public ResponseVO addRelById(@RequestParam(value = "fromId")String fromId,
                                  @RequestParam(value = "toId")String toId,
                                  @RequestParam(value = "name")String name){
-        if (someEntityIsNull(fromId, toId)) return ResponseVO.buildFailure(ID_NOT_EXIST);
         relationship newRel = relationshipService.addRelationship(fromId, toId, name);
+        if(newRel == null){
+            return ResponseVO.buildFailure(ID_NOT_EXIST);
+        }
         redisUtil.set(RELATIONSHIP_REDIS_PREFIX+fromId+"-"+toId, newRel);
         redisUtil.expire(RELATIONSHIP_REDIS_PREFIX+fromId+"-"+toId, TWO_HOURS_IN_SECOND);
         return ResponseVO.buildSuccess(newRel);
     }
 
     @RequestMapping(path = "/delRelationship1", method = RequestMethod.POST)
-    public ResponseVO deleteRelById(@RequestParam(value = "source")String source, @RequestParam(value = "target")String target){
-        if (someEntityIsNull(source, target)) return ResponseVO.buildFailure(ID_NOT_EXIST);
+    public ResponseVO deleteRelById(@RequestParam(value = "source")String source, @RequestParam(value = "target")String target, @RequestParam(value = "name")String name){
         redisUtil.del(RELATIONSHIP_REDIS_PREFIX+source+"-"+target);
-        relationshipService.deleteRelationById(source, target);
-        return ResponseVO.buildSuccess();
+        boolean flag = relationshipService.deleteRelationById(source, target, name);
+        if(flag) return ResponseVO.buildSuccess();
+        else return ResponseVO.buildFailure(ID_NOT_EXIST+REL_NOT_EXIST);
     }
 
     @RequestMapping(path = "/delRelationship2", method = RequestMethod.POST)
@@ -89,22 +86,4 @@ public class RelationshipController {
         return ResponseVO.buildSuccess();
     }
 
-    //extract addRelById和deleteRelById中的重复代码成方法
-    private boolean someEntityIsNull(@RequestParam("fromId") String fromId, @RequestParam("toId") String toId) {
-        Entity entity1, entity2;
-        try{
-            entity1 = (Entity) redisUtil.get(ENTITY_REDIS_PREFIX+fromId);
-            if(entity1 == null) entity1 = entityService.findEntityById(fromId);
-            entity2 = (Entity) redisUtil.get(ENTITY_REDIS_PREFIX+toId);
-            if(entity2 == null) entity2 = entityService.findEntityById(toId);
-            if(entity1 == null || entity2 == null)throw new Exception();
-        }catch (Exception exception){
-            return true;
-        }
-        redisUtil.set(ENTITY_REDIS_PREFIX+fromId, entity1);
-        redisUtil.expire(ENTITY_REDIS_PREFIX+fromId, TWO_HOURS_IN_SECOND);
-        redisUtil.set(ENTITY_REDIS_PREFIX+toId, entity2);
-        redisUtil.expire(ENTITY_REDIS_PREFIX+toId, TWO_HOURS_IN_SECOND);
-        return false;
-    }
 }

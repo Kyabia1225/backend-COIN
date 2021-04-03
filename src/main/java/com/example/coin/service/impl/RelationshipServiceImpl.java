@@ -1,7 +1,9 @@
 package com.example.coin.service.impl;
 
 import com.example.coin.DAO.RelationshipRepository;
+import com.example.coin.javaBeans.Entity;
 import com.example.coin.javaBeans.relationship;
+import com.example.coin.service.EntityService;
 import com.example.coin.service.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -16,12 +18,14 @@ import java.util.Optional;
 public class RelationshipServiceImpl implements RelationshipService {
 
     @Autowired
+    private EntityService entityService;
+    @Autowired
     private RelationshipRepository relationshipRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
 
     /**
-     *
+     *  如果实体节点不存在 返回null
      * @param from
      * @param to
      * @param name 关系名称
@@ -29,21 +33,40 @@ public class RelationshipServiceImpl implements RelationshipService {
      */
     @Override
     public relationship addRelationship(String from, String to, String name) {
+        Entity source = entityService.findEntityById(from);
+        Entity target = entityService.findEntityById(to);
+        if(source == null || target == null) return null;
         relationship rel = new relationship(from, to, name);
-        return relationshipRepository.save(rel);
-    }
-    public relationship addRelationship(relationship rel) {
+        source.getRelatesTo().put(rel.getId(), to);
+        target.getRelatesTo().put(rel.getId(), from);
         return relationshipRepository.save(rel);
     }
 
     /**
      *
-     * @param source 被删除的节点关系from的id
-     * @param target 被删除的节点关系to的id
+     * @param rel
+     * @return
      */
-    public void deleteRelationById(String source, String target) {
-        Query query = Query.query(Criteria.where("source").is(source).and("target").is(target));
-        mongoTemplate.remove(query,"relationships");
+    public relationship addRelationship(relationship rel) {
+        return relationshipRepository.save(rel);
+    }
+
+    /**
+     * 首先判断两节点是否存在
+     * @param from 被删除的节点关系from的id
+     * @param to 被删除的节点关系to的id
+     */
+    public boolean deleteRelationById(String from, String to, String name) {
+        Entity source = entityService.findEntityById(from);
+        Entity target = entityService.findEntityById(to);
+        if(source == null || target == null) return false;
+        //删除关系时，相应的删除节点的relatesTo中的键值对
+        Query query = Query.query(Criteria.where("source").is(source).and("target").is(target).and("name").is(name));
+        relationship deletedRel = mongoTemplate.findAndRemove(query, relationship.class, "relationships");
+        if(deletedRel == null) return false;
+        source.getRelatesTo().remove(deletedRel.getId());
+        target.getRelatesTo().remove(deletedRel.getId());
+        return true;
     }
 
     /**
@@ -51,8 +74,17 @@ public class RelationshipServiceImpl implements RelationshipService {
      * @param id
      */
     @Override
-    public void deleteRelationById(String id) {
+    public boolean deleteRelationById(String id) {
+        Optional<relationship> optionalRel = relationshipRepository.findById(id);
+        if(!optionalRel.isPresent())
+            return false;
+        relationship rel = optionalRel.get();
+        Entity source = entityService.findEntityById(rel.getSource());
+        Entity target = entityService.findEntityById(rel.getTarget());
+        source.getRelatesTo().remove(rel.getId());
+        target.getRelatesTo().remove(rel.getId());
         relationshipRepository.deleteById(id);
+        return true;
     }
 
     /**
@@ -98,5 +130,10 @@ public class RelationshipServiceImpl implements RelationshipService {
     @Override
     public void deleteAllRelationships() {
         relationshipRepository.deleteAll();
+        //删除节点中记录的所有关系
+        List<Entity> entities = entityService.findAllEntities();
+        for(Entity e : entities){
+            e.getRelatesTo().clear();
+        }
     }
 }

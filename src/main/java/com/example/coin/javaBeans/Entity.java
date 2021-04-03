@@ -26,21 +26,21 @@ public class Entity implements Serializable {
     //节点属性（键值对形式）
     private HashMap<String, String> properties;
     private String type;
-    //记录与该节点相关的节点与关系
-    private HashMap<relationship, Entity>relatesTo;
+    //记录与该节点相关的节点与关系: 前者是relationship的id，后者是Entity的id
+    private HashMap<String, String>relatesTo;
 
     public HashSet<String> associatedEntites(){
         HashSet<String> entitiesId= new HashSet<>();
-        for(Entity e : relatesTo.values()){
-            entitiesId.add(e.getId());
+        for(String e : relatesTo.values()){
+            entitiesId.add(e);
         }
         return entitiesId;
     }
     
     public HashSet<String> associatedRelationships(){
         HashSet<String> relsId = new HashSet<>();
-        for(relationship rel : relatesTo.keySet()){
-            relsId.add(rel.getId());
+        for(String rel : relatesTo.keySet()){
+            relsId.add(rel);
         }
         return relsId;
     }

@@ -26,13 +26,8 @@ public class EntityController {
 
     @RequestMapping(path = "/addEntity", method = RequestMethod.POST)
     public ResponseVO addEntity(@RequestBody Entity entity){
-        Entity e;
-        try{
-            e = entityService.createEntity(entity);
-            if(e == null) throw new Exception();
-        }catch (Exception exception){
-            return ResponseVO.buildFailure(ENTITY_EXIST);
-        }
+        Entity e = entityService.createEntity(entity);
+        if(e == null) return ResponseVO.buildFailure(ENTITY_EXIST);
         //加入缓存
         redisUtil.set(ENTITY_REDIS_PREFIX+e.getId(), e);
         //设置缓存时长
@@ -43,8 +38,9 @@ public class EntityController {
     @RequestMapping(path = "/deleteEntity", method = RequestMethod.POST)
     public ResponseVO deleteEntityById(@RequestParam(value = "id")String id){
         redisUtil.del(ENTITY_REDIS_PREFIX+id);
-        entityService.deleteEntityById(id);
-        return ResponseVO.buildSuccess();
+        boolean flag = entityService.deleteEntityById(id);
+        if(flag) return ResponseVO.buildSuccess();
+        else return ResponseVO.buildFailure(ID_NOT_EXIST);
     }
 
     @RequestMapping(path = "/getEntity", method = RequestMethod.GET)

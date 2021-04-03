@@ -9,10 +9,10 @@ public interface RelationshipService {
     //增加关系
     relationship addRelationship(String from, String to, String name);
     relationship addRelationship(relationship each);
-    //靠两个节点id删除关系
-    void deleteRelationById(String source, String target);
+    //靠两个节点id与关系名称删除关系
+    boolean deleteRelationById(String source, String target, String name);
     //靠rel的id删除关系
-    void deleteRelationById(String id);
+    boolean deleteRelationById(String id);
     //查询关系
     relationship findRelationById(String id);
     //更新关系

@@ -33,8 +33,7 @@ public class ControllerTest {
     //test2是基于test1的测试进行的，自行更改id
     @Test
     public void test2(){
-        ResponseVO responseVO = relationshipController.deleteRelById("6068ba6c3065a4320001bf01","6068ba6e3065a4320001bf02");
-        System.out.println(responseVO);
+
 
     }
     @Test

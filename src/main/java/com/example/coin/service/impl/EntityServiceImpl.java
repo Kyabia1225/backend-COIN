@@ -3,10 +3,11 @@ package com.example.coin.service.impl;
 import com.example.coin.DAO.EntityRepository;
 import com.example.coin.javaBeans.Entity;
 import com.example.coin.service.EntityService;
+import com.example.coin.service.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public class EntityServiceImpl implements EntityService {
     @Autowired
     private EntityRepository entityRepository;
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private RelationshipService relationshipService;
 
     /**
      * 将关系节点持久化到数据库中
@@ -32,8 +33,16 @@ public class EntityServiceImpl implements EntityService {
      * @param id
      */
     @Override
-    public void deleteEntityById(String id) {
+    public boolean deleteEntityById(String id) {
+        Entity entity = findEntityById(id);
+        if(entity == null) return false;
+        //删除与节点相关的所有关系
+        HashSet<String> associatedRelationships = entity.associatedRelationships();
+        for(String relsId : associatedRelationships){
+            relationshipService.deleteRelationById(relsId);
+        }
         entityRepository.deleteById(id);
+        return true;
     }
 
     /**
@@ -78,6 +87,8 @@ public class EntityServiceImpl implements EntityService {
     @Override
     public void deleteAllEntities() {
         entityRepository.deleteAll();
+        //删除所有实体节点的同时删除所有关系节点
+        relationshipService.deleteAllRelationships();
     }
 
 }

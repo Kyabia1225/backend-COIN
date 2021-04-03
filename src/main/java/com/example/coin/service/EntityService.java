@@ -8,7 +8,7 @@ public interface EntityService {
     //增加实体
     Entity createEntity(Entity entity);
     //删除实体
-    void deleteEntityById(String id);
+    boolean deleteEntityById(String id);
     //查询实体
     Entity findEntityById(String id);
     //更新实体
