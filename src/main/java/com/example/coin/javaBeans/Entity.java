@@ -11,14 +11,11 @@ import java.util.HashSet;
 @Data
 @ToString(exclude = "id")
 @EqualsAndHashCode
-@NoArgsConstructor
-@RequiredArgsConstructor
 
 @Document(collection = "entities")
 public class Entity implements Serializable {
     @Id
     private String id;
-    @NonNull
     private String name;
     //fx, fy用来存储节点位置
     private Double fx;
@@ -43,5 +40,11 @@ public class Entity implements Serializable {
             relsId.add(rel);
         }
         return relsId;
+    }
+
+    public Entity(String name) {
+        this.name = name;
+        this.relatesTo = new HashMap<>();
+        this.properties = new HashMap<>();
     }
 }

@@ -37,9 +37,12 @@ public class RelationshipServiceImpl implements RelationshipService {
         Entity target = entityService.findEntityById(to);
         if(source == null || target == null) return null;
         relationship rel = new relationship(from, to, name);
+        relationshipRepository.save(rel);
         source.getRelatesTo().put(rel.getId(), to);
         target.getRelatesTo().put(rel.getId(), from);
-        return relationshipRepository.save(rel);
+        entityService.updateEntityById(from, source);
+        entityService.updateEntityById(to, target);
+        return rel;
     }
 
     /**
@@ -66,6 +69,8 @@ public class RelationshipServiceImpl implements RelationshipService {
         if(deletedRel == null) return false;
         source.getRelatesTo().remove(deletedRel.getId());
         target.getRelatesTo().remove(deletedRel.getId());
+        entityService.updateEntityById(from, source);
+        entityService.updateEntityById(to, target);
         return true;
     }
 

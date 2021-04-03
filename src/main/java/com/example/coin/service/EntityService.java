@@ -12,7 +12,7 @@ public interface EntityService {
     //查询实体
     Entity findEntityById(String id);
     //更新实体
-    void updateEntityById(String id, Entity e);
+    boolean updateEntityById(String id, Entity e);
     //获取所有实体
     List<Entity> findAllEntities();
     //删除所有实体
