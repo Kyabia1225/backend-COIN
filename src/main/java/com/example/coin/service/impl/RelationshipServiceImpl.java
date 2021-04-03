@@ -51,8 +51,8 @@ public class RelationshipServiceImpl implements RelationshipService {
     public void updateRelationshipById(String id, relationship r) {
         relationship rel = findRelationById(id);
         rel.setRelationship(r.getRelationship());
-        rel.setFrom(r.getFrom());
-        rel.setTo(r.getTo());
+        rel.setSource(r.getSource());
+        rel.setTarget(r.getTarget());
     }
 
     @Override

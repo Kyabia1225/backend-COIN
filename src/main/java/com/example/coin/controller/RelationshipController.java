@@ -63,7 +63,7 @@ public class RelationshipController {
     public ResponseVO deleteRelById(@RequestParam(value = "id")String id){
         relationship rel = relationshipService.findRelationById(id);
         if(rel == null) return ResponseVO.buildFailure(ID_NOT_EXIST);
-        redisUtil.del(RELATIONSHIP_REDIS_PREFIX+rel.getFrom()+"-"+rel.getTo());
+        redisUtil.del(RELATIONSHIP_REDIS_PREFIX+rel.getSource()+"-"+rel.getTarget());
         relationshipService.deleteRelationById(id);
         return ResponseVO.buildSuccess();
     }
@@ -84,8 +84,8 @@ public class RelationshipController {
     public ResponseVO updateRelationship(@RequestParam(value = "id")String id, @RequestBody relationship rel){
         if(relationshipService.findRelationById(id) == null)return ResponseVO.buildFailure(ID_NOT_EXIST);
         relationshipService.updateRelationshipById(id, rel);
-        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+rel.getFrom()+"-"+rel.getTo(), rel);
-        redisUtil.expire(RELATIONSHIP_REDIS_PREFIX+rel.getFrom()+"-"+rel.getTo(), TWO_HOURS_IN_SECOND);
+        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+rel.getSource()+"-"+rel.getTarget(), rel);
+        redisUtil.expire(RELATIONSHIP_REDIS_PREFIX+rel.getSource()+"-"+rel.getTarget(), TWO_HOURS_IN_SECOND);
         return ResponseVO.buildSuccess();
     }
 

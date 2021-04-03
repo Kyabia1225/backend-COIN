@@ -17,9 +17,9 @@ public class relationship implements Serializable {
     @Id
     private String id;
     @NonNull
-    private String from;
+    private String source;
     @NonNull
-    private String to;
+    private String target;
     @NonNull
     private String relationship;
 }
