@@ -1,6 +1,6 @@
 package com.example.coin.service;
 
-import com.example.coin.pojo.*;
+import com.example.coin.javaBeans.*;
 
 import java.util.List;
 

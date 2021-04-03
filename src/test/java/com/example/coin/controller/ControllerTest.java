@@ -1,7 +1,6 @@
 package com.example.coin.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.example.coin.pojo.Entity;
+import com.example.coin.javaBeans.Entity;
 import com.example.coin.util.ResponseVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,9 +33,8 @@ public class ControllerTest {
     //test2是基于test1的测试进行的，自行更改id
     @Test
     public void test2(){
-        ResponseVO emm =  entityController.getEntityById("606304b154b0ab6024fac435");
-        String s = JSON.toJSONString(emm);
-        System.out.println(s);
+        ResponseVO responseVO = relationshipController.deleteRelById("6068ba6c3065a4320001bf01","6068ba6e3065a4320001bf02");
+        System.out.println(responseVO);
 
     }
     @Test

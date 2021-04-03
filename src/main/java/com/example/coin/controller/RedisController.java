@@ -1,8 +1,8 @@
 package com.example.coin.controller;
 
 
-import com.example.coin.pojo.Entity;
-import com.example.coin.pojo.relationship;
+import com.example.coin.javaBeans.Entity;
+import com.example.coin.javaBeans.relationship;
 import com.example.coin.service.EntityService;
 import com.example.coin.service.RelationshipService;
 import com.example.coin.util.RedisUtil;

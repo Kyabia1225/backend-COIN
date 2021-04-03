@@ -1,6 +1,6 @@
 package com.example.coin.controller;
 
-import com.example.coin.pojo.Entity;
+import com.example.coin.javaBeans.Entity;
 import com.example.coin.service.EntityService;
 import com.example.coin.util.RedisUtil;
 import com.example.coin.util.ResponseVO;

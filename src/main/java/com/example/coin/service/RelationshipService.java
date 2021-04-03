@@ -1,7 +1,6 @@
 package com.example.coin.service;
 
-import com.example.coin.pojo.Entity;
-import com.example.coin.pojo.relationship;
+import com.example.coin.javaBeans.relationship;
 
 import java.util.List;
 

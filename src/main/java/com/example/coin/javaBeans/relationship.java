@@ -1,4 +1,4 @@
-package com.example.coin.pojo;
+package com.example.coin.javaBeans;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

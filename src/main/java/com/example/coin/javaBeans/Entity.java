@@ -1,4 +1,4 @@
-package com.example.coin.pojo;
+package com.example.coin.javaBeans;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 
 @Data
 @ToString(exclude = "id")
@@ -25,5 +26,22 @@ public class Entity implements Serializable {
     //节点属性（键值对形式）
     private HashMap<String, String> properties;
     private String type;
-    //todo: 需要记录和该节点有关的节点与关系
+    //记录与该节点相关的节点与关系
+    private HashMap<relationship, Entity>relatesTo;
+
+    public HashSet<String> associatedEntites(){
+        HashSet<String> entitiesId= new HashSet<>();
+        for(Entity e : relatesTo.values()){
+            entitiesId.add(e.getId());
+        }
+        return entitiesId;
+    }
+    
+    public HashSet<String> associatedRelationships(){
+        HashSet<String> relsId = new HashSet<>();
+        for(relationship rel : relatesTo.keySet()){
+            relsId.add(rel.getId());
+        }
+        return relsId;
+    }
 }
