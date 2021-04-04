@@ -26,9 +26,10 @@ public class ControllerTest {
         properties.put("height","3000");
         e1.setProperties(properties);
         Entity e2 = new Entity("mamama");
-        entityController.addEntity(e1);
-        entityController.addEntity(e2);
-        relationshipController.addRelById(e1.getId(), e2.getId(), "loves");
+        entityController.addEntity("kumin","person");
+        //entityController.addEntity(e1);
+        //entityController.addEntity(e2);
+        //relationshipController.addRelById(e1.getId(), e2.getId(), "loves");
     }
     //test2是基于test1的测试进行的，自行更改id
     @Test

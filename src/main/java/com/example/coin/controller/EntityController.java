@@ -25,8 +25,11 @@ public class EntityController {
     private static final String ID_NOT_EXIST = "该实体节点ID不存在";
 
     @RequestMapping(path = "/addEntity", method = RequestMethod.POST)
-    public ResponseVO addEntity(@RequestParam(value = "entity")Entity entity){
-        Entity e = entityService.createEntity(entity);
+    public ResponseVO addEntity(@RequestParam(value = "name")String name,
+        @RequestParam(value = "type")String type){
+        Entity e=new Entity(name);
+        e.setType(type);
+        entityService.createEntity(e);
         if(e == null) return ResponseVO.buildFailure(ENTITY_EXIST);
         //加入缓存
         redisUtil.set(ENTITY_REDIS_PREFIX+e.getId(), e);
