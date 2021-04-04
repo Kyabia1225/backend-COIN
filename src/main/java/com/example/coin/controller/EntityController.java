@@ -25,7 +25,7 @@ public class EntityController {
     private static final String ID_NOT_EXIST = "该实体节点ID不存在";
 
     @RequestMapping(path = "/addEntity", method = RequestMethod.POST)
-    public ResponseVO addEntity(@RequestBody Entity entity){
+    public ResponseVO addEntity(@RequestParam(value = "entity")Entity entity){
         Entity e = entityService.createEntity(entity);
         if(e == null) return ResponseVO.buildFailure(ENTITY_EXIST);
         //加入缓存
@@ -74,7 +74,7 @@ public class EntityController {
     }
 
     @RequestMapping(path = "/updateEntity", method = RequestMethod.POST)
-    public ResponseVO updateEntity(@RequestParam(value = "id")String id, @RequestBody Entity entity){
+    public ResponseVO updateEntity(@RequestParam(value = "id")String id, @RequestParam(value = "entity") Entity entity){
         entityService.updateEntityById(id, entity);
         return ResponseVO.buildSuccess();
     }

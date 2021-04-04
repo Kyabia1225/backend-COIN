@@ -64,7 +64,7 @@ public class RelationshipServiceImpl implements RelationshipService {
         Entity target = entityService.findEntityById(to);
         if(source == null || target == null) return false;
         //删除关系时，相应的删除节点的relatesTo中的键值对
-        Query query = Query.query(Criteria.where("source").is(source).and("target").is(target).and("name").is(name));
+        Query query = Query.query(Criteria.where("source").is(from).and("target").is(to).and("relation").is(name));
         relationship deletedRel = mongoTemplate.findAndRemove(query, relationship.class, "relationships");
         if(deletedRel == null) return false;
         source.getRelatesTo().remove(deletedRel.getId());
@@ -88,6 +88,8 @@ public class RelationshipServiceImpl implements RelationshipService {
         Entity target = entityService.findEntityById(rel.getTarget());
         source.getRelatesTo().remove(rel.getId());
         target.getRelatesTo().remove(rel.getId());
+        entityService.updateEntityById(source.getId(), source);
+        entityService.updateEntityById(target.getId(), target);
         relationshipRepository.deleteById(id);
         return true;
     }
@@ -115,7 +117,7 @@ public class RelationshipServiceImpl implements RelationshipService {
     @Override
     public void updateRelationshipById(String id, relationship r) {
         relationship rel = findRelationById(id);
-        rel.setRelationship(r.getRelationship());
+        rel.setRelation(r.getRelation());
         rel.setSource(r.getSource());
         rel.setTarget(r.getTarget());
     }

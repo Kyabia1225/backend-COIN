@@ -85,7 +85,7 @@ public class EntityServiceImpl implements EntityService {
         update.set("properties", e.getProperties());
         update.set("type", e.getType());
         update.set("relatesTo", e.getRelatesTo());
-        mongoTemplate.upsert(query, update, "entities");
+        mongoTemplate.updateFirst(query, update, Entity.class, "entities");
         return true;
     }
 
@@ -95,7 +95,7 @@ public class EntityServiceImpl implements EntityService {
      */
     @Override
     public List<Entity> findAllEntities() {
-        return (List<Entity>) entityRepository.findAll();
+        return entityRepository.findAll();
     }
 
     /**

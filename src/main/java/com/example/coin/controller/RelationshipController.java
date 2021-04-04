@@ -78,7 +78,7 @@ public class RelationshipController {
     }
 
     @RequestMapping(path = "/updateRelationship", method = RequestMethod.POST)
-    public ResponseVO updateRelationship(@RequestParam(value = "id")String id, @RequestBody relationship rel){
+    public ResponseVO updateRelationship(@RequestParam(value = "id")String id, @RequestParam(value = "relationship") relationship rel){
         if(relationshipService.findRelationById(id) == null)return ResponseVO.buildFailure(ID_NOT_EXIST);
         relationshipService.updateRelationshipById(id, rel);
         redisUtil.set(RELATIONSHIP_REDIS_PREFIX+rel.getSource()+"-"+rel.getTarget(), rel);

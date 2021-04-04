@@ -21,5 +21,5 @@ public class relationship implements Serializable {
     @NonNull
     private String target;
     @NonNull
-    private String relationship;
+    private String relation;
 }
