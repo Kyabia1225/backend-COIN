@@ -1,11 +1,7 @@
 package com.example.coin.controller;
 
-
-import com.example.coin.javaBeans.Entity;
 import com.example.coin.javaBeans.relationship;
-import com.example.coin.service.EntityService;
 import com.example.coin.service.RelationshipService;
-import com.example.coin.util.RedisUtil;
 import com.example.coin.util.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +16,6 @@ import static com.example.coin.util.RedisUtil.TWO_HOURS_IN_SECOND;
 public class RelationshipController {
     @Autowired
     private RelationshipService relationshipService;
-    @Autowired
-    private EntityService entityService;
-    @Autowired
-    private RedisUtil redisUtil;
 
     //错误信息
     private static final String ID_NOT_EXIST = "节点ID不存在";
@@ -36,21 +28,18 @@ public class RelationshipController {
     }
 
     @RequestMapping(path = "/addRelationship", method = RequestMethod.POST)
-    public ResponseVO addRelById(@RequestParam(value = "fromId")String fromId,
-                                 @RequestParam(value = "toId")String toId,
-                                 @RequestParam(value = "name")String name){
-        relationship newRel = relationshipService.addRelationship(fromId, toId, name);
+    public ResponseVO addRelById(@RequestParam(value = "source")String source,
+                                 @RequestParam(value = "target")String target,
+                                 @RequestParam(value = "relation")String relation){
+        relationship newRel = relationshipService.addRelationship(source, target, relation);
         if(newRel == null){
             return ResponseVO.buildFailure(ID_NOT_EXIST);
         }
-        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+fromId+"-"+toId, newRel);
-        redisUtil.expire(RELATIONSHIP_REDIS_PREFIX+fromId+"-"+toId, TWO_HOURS_IN_SECOND);
         return ResponseVO.buildSuccess(newRel);
     }
 
     @RequestMapping(path = "/delRelationship1", method = RequestMethod.POST)
     public ResponseVO deleteRelById(@RequestParam(value = "source")String source, @RequestParam(value = "target")String target, @RequestParam(value = "name")String name){
-        redisUtil.del(RELATIONSHIP_REDIS_PREFIX+source+"-"+target);
         boolean flag = relationshipService.deleteRelationById(source, target, name);
         if(flag) return ResponseVO.buildSuccess();
         else return ResponseVO.buildFailure(ID_NOT_EXIST+REL_NOT_EXIST);
@@ -58,11 +47,9 @@ public class RelationshipController {
 
     @RequestMapping(path = "/delRelationship2", method = RequestMethod.POST)
     public ResponseVO deleteRelById(@RequestParam(value = "id")String id){
-        relationship rel = relationshipService.findRelationById(id);
-        if(rel == null) return ResponseVO.buildFailure(ID_NOT_EXIST);
-        redisUtil.del(RELATIONSHIP_REDIS_PREFIX+rel.getSource()+"-"+rel.getTarget());
-        relationshipService.deleteRelationById(id);
-        return ResponseVO.buildSuccess();
+        boolean flag = relationshipService.deleteRelationById(id);
+        if(!flag) return ResponseVO.buildFailure(ID_NOT_EXIST);
+        else return ResponseVO.buildSuccess();
     }
 
     @RequestMapping(path = "/listRelationships", method = RequestMethod.GET)
@@ -78,12 +65,10 @@ public class RelationshipController {
     }
 
     @RequestMapping(path = "/updateRelationship", method = RequestMethod.POST)
-    public ResponseVO updateRelationship(@RequestParam(value = "id")String id, @RequestParam(value = "relationship") relationship rel){
-        if(relationshipService.findRelationById(id) == null)return ResponseVO.buildFailure(ID_NOT_EXIST);
-        relationshipService.updateRelationshipById(id, rel);
-        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+rel.getSource()+"-"+rel.getTarget(), rel);
-        redisUtil.expire(RELATIONSHIP_REDIS_PREFIX+rel.getSource()+"-"+rel.getTarget(), TWO_HOURS_IN_SECOND);
-        return ResponseVO.buildSuccess();
+    public ResponseVO updateRelationship(@RequestParam(value = "id")String id, @RequestBody relationship rel){
+        boolean flag = relationshipService.updateRelationshipById(id, rel);
+        if(!flag) return ResponseVO.buildFailure(ID_NOT_EXIST);
+        else return ResponseVO.buildSuccess();
     }
 
 }

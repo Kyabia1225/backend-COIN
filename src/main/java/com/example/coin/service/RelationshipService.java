@@ -16,7 +16,7 @@ public interface RelationshipService {
     //查询关系
     relationship findRelationById(String id);
     //更新关系
-    void updateRelationshipById(String id, relationship r);
+    boolean updateRelationshipById(String id, relationship r);
     //获取所有关系
     List<relationship> findAllRelationships();
     //删除所有关系

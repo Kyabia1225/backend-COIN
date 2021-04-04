@@ -11,6 +11,7 @@ import java.util.HashSet;
 @Data
 @ToString(exclude = "id")
 @EqualsAndHashCode
+@NoArgsConstructor
 
 @Document(collection = "entities")
 public class Entity implements Serializable {

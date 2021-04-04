@@ -20,21 +20,27 @@ public class ControllerTest {
     @Test
     public void test1() {
         Entity e1 = new Entity("yuzijiang");
-        HashMap<String, String> properties = new HashMap<>();
-        properties.put("age","1000");
-        properties.put("weight","2000");
-        properties.put("height","3000");
-        e1.setProperties(properties);
+        HashMap<String, String> properties1 = new HashMap<>();
+        properties1.put("age","1000");
+        properties1.put("weight","2000");
+        properties1.put("height","3000");
+        e1.setProperties(properties1);
         Entity e2 = new Entity("mamama");
+        Entity e3 = new Entity("huixiang");
+        HashMap<String, String> properties3 = new HashMap<>();
+        properties3.put("age", "18");
+        e3.setProperties(properties3);
         entityController.addEntity(e1);
         entityController.addEntity(e2);
+        entityController.addEntity(e3);
         relationshipController.addRelById(e1.getId(), e2.getId(), "loves");
+        relationshipController.addRelById(e1.getId(), e3.getId(), "friendly");
     }
     //test2是基于test1的测试进行的，自行更改id
     @Test
     public void test2(){
-        ResponseVO loves = relationshipController.deleteRelById("60694d97502b121c5ac1b64c");
-        System.out.println(loves);
+        Entity e = (Entity) entityController.getEntityById("60699207764eee6b502a9862").getContent();
+        System.out.println(e);
     }
     @Test
     public void test3(){
