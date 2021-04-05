@@ -49,8 +49,8 @@ public class RelationshipServiceImpl implements RelationshipService {
         relationshipRepository.save(rel);
         source.getRelatesTo().put(rel.getId(), to);
         target.getRelatesTo().put(rel.getId(), from);
-        entityService.updateEntityById(from, source);
-        entityService.updateEntityById(to, target);
+        entityService.updateEntityById(from, source, false);
+        entityService.updateEntityById(to, target, false);
         //保存到缓存中
         //redisUtil.expire(from, TWO_HOURS_IN_SECOND);
         //redisUtil.expire(to, TWO_HOURS_IN_SECOND);
@@ -78,13 +78,14 @@ public class RelationshipServiceImpl implements RelationshipService {
         Entity target = entityService.findEntityById(to);
         if(source == null || target == null) return false;
         //删除关系时，相应的删除节点的relatesTo中的键值对
+        //todo: 是否要为source, target, relation建立联合索引？
         Query query = Query.query(Criteria.where("source").is(from).and("target").is(to).and("relation").is(name));
         relationship deletedRel = mongoTemplate.findAndRemove(query, relationship.class, "relationships");
         if(deletedRel == null) return false;
         source.getRelatesTo().remove(deletedRel.getId());
         target.getRelatesTo().remove(deletedRel.getId());
-        entityService.updateEntityById(from, source);
-        entityService.updateEntityById(to, target);
+        entityService.updateEntityById(from, source, false);
+        entityService.updateEntityById(to, target, false);
         //redisUtil.expire(from, TWO_HOURS_IN_SECOND);
         //redisUtil.expire(to, TWO_HOURS_IN_SECOND);
         redisUtil.del(RELATIONSHIP_REDIS_PREFIX+deletedRel.getId());
@@ -105,8 +106,8 @@ public class RelationshipServiceImpl implements RelationshipService {
         Entity target = entityService.findEntityById(rel.getTarget());
         source.getRelatesTo().remove(rel.getId());
         target.getRelatesTo().remove(rel.getId());
-        entityService.updateEntityById(source.getId(), source);
-        entityService.updateEntityById(target.getId(), target);
+        entityService.updateEntityById(source.getId(), source, false);
+        entityService.updateEntityById(target.getId(), target, false);
         //redisUtil.expire(source.getId(), TWO_HOURS_IN_SECOND);
         //redisUtil.expire(target.getId(), TWO_HOURS_IN_SECOND);
         redisUtil.del(RELATIONSHIP_REDIS_PREFIX+id);
@@ -144,14 +145,13 @@ public class RelationshipServiceImpl implements RelationshipService {
      */
     @Override
     public boolean updateRelationshipById(String id, relationship r) {
-        if(findRelationById(id) == null) return false;
-        Query query = Query.query(Criteria.where("id").is(id));
-        Update update = new Update();
-        update.set("source", r.getSource());
-        update.set("target", r.getTarget());
-        update.set("relation", r.getRelation());
-        mongoTemplate.updateFirst(query, update, relationship.class, "relationships");
-        redisUtil.del(RELATIONSHIP_REDIS_PREFIX+id);
+        relationship origin = findRelationById(id);
+        if(origin == null) return false;
+        origin.setRelation(r.getRelation());
+        origin.setSource(r.getSource());
+        origin.setTarget(r.getTarget());
+        relationshipRepository.save(origin);
+        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+id, origin, TWO_HOURS_IN_SECOND);
         return true;
     }
 
@@ -180,7 +180,7 @@ public class RelationshipServiceImpl implements RelationshipService {
         List<Entity> entities = entityService.findAllEntities();
         for(Entity e : entities){
             e.getRelatesTo().clear();
-            entityService.updateEntityById(e.getId(), e);
+            entityService.updateEntityById(e.getId(), e, false);
         }
     }
 }

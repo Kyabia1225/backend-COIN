@@ -1,7 +1,6 @@
 package com.example.coin.controller;
 
 import com.example.coin.javaBeans.Entity;
-import com.example.coin.util.ResponseVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +43,11 @@ public class ControllerTest {
     }
     @Test
     public void test3(){
-
+        Entity e = new Entity("yuzijiang", "person");
+        entityController.addEntity(e);
+        Entity newEntity = new Entity("yuzijiang", "person");
+        newEntity.getRelatesTo().put("weight","65kg");
+        newEntity.getRelatesTo().put("height","171cm");
+        entityController.updateEntity(e.getId(), newEntity);
     }
 }

@@ -6,10 +6,6 @@ import com.example.coin.service.EntityService;
 import com.example.coin.service.RelationshipService;
 import com.example.coin.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -24,8 +20,6 @@ public class EntityServiceImpl implements EntityService {
     private EntityRepository entityRepository;
     @Autowired
     private RelationshipService relationshipService;
-    @Autowired
-    private MongoTemplate mongoTemplate;
     @Autowired
     private RedisUtil redisUtil;
 
@@ -56,7 +50,7 @@ public class EntityServiceImpl implements EntityService {
             String correspondingEntityId = entity.getRelatesTo().get(relId);
             Entity correspondingEntity = findEntityById(correspondingEntityId);
             correspondingEntity.getRelatesTo().remove(relId);
-            updateEntityById(correspondingEntityId, correspondingEntity);
+            updateEntityById(correspondingEntityId, correspondingEntity, false);
             //redisUtil.expire(ENTITY_REDIS_PREFIX+correspondingEntityId, TWO_HOURS_IN_SECOND);//update方法中redis重新设置了过期时间
             //然后删除这个关系
             redisUtil.del(RELATIONSHIP_REDIS_PREFIX+relId);
@@ -90,28 +84,26 @@ public class EntityServiceImpl implements EntityService {
     }
 
     /**
-     * 更新指定id的节点，请务必保证id存在
-     * @param id
-     * @param e
+     * 更新指定id的节点
+     * @param id    节点id
+     * @param e     更新内容
+     * @param updateAll     是否全部更新（出于效率问题， 一般只更新relatesTo）
+     * @return  是否成功
      */
     @Override
-    public boolean updateEntityById(String id, Entity e) {
-        if(findEntityById(id) == null) return false;
-        Query query = Query.query(Criteria.where("id").is(id));
-        Update update = new Update();
-        update.set("name", e.getName());
-        update.set("fx", e.getFx());
-        update.set("fy", e.getFy());
-        update.set("properties", e.getProperties());
-        update.set("type", e.getType());
-        update.set("relatesTo", e.getRelatesTo());
-        mongoTemplate.updateFirst(query, update, Entity.class, "entities");
-        /*
-            现在遇到了一个问题，当使用MongoTemplate进行update操作的时候，mongoTemplate并不会给我返还新的Entity的信息
-            我要更新redis中的Entity又必须首先根据id去find这个Entity，然而调用find方法的时候会首先从redis中去查询，造成了矛盾。
-            暂时解决办法：update操作的时候，删除redis中这个节点，迫使下次find这个节点的时候从mongodb中读取，从而更新redis
-         */
-        redisUtil.del(ENTITY_REDIS_PREFIX+id);
+    public boolean updateEntityById(String id, Entity e, boolean updateAll) {
+        Entity origin = findEntityById(id);
+        if(origin == null) return false;
+        if(updateAll) { //出于效率考虑，大多数更新只更新relatesTo，忽略以下变量
+            origin.setName(e.getName());
+            origin.setType(e.getType());
+            origin.setFx(e.getFx());
+            origin.setFy(e.getFy());
+            origin.setProperties(e.getProperties());
+        }
+        origin.setRelatesTo(e.getRelatesTo());
+        entityRepository.save(origin);
+        redisUtil.set(ENTITY_REDIS_PREFIX+id, origin, TWO_HOURS_IN_SECOND);
         return true;
     }
 

@@ -55,7 +55,7 @@ public class EntityController {
 
     @RequestMapping(path = "/updateEntity", method = RequestMethod.POST)
     public ResponseVO updateEntity(@RequestParam(value = "id")String id, @RequestBody Entity entity){
-        boolean flag = entityService.updateEntityById(id, entity);
+        boolean flag = entityService.updateEntityById(id, entity, true);
         if(!flag) return ResponseVO.buildFailure(ID_NOT_EXIST);
         else return ResponseVO.buildSuccess();
     }
