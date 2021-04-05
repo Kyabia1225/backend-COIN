@@ -3,7 +3,6 @@ package com.example.coin.javaBeans;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.io.Serializable;
 
@@ -22,5 +21,7 @@ public class relationship implements Serializable {
     @NonNull
     private String target;
     @NonNull
+    @org.springframework.data.redis.core.index.Indexed
+    @org.springframework.data.mongodb.core.index.Indexed
     private String relation;
 }

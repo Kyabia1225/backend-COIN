@@ -17,6 +17,8 @@ import java.util.HashSet;
 public class Entity implements Serializable {
     @Id
     private String id;
+    @org.springframework.data.redis.core.index.Indexed
+    @org.springframework.data.mongodb.core.index.Indexed
     @Field("name")
     private String name;
     //fx, fy用来存储节点位置
