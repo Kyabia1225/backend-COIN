@@ -1,28 +1,25 @@
 package com.example.coin.controller;
 
-import com.example.coin.javaBeans.relationship;
-import com.example.coin.service.RelationshipService;
+import com.example.coin.po.Relation;
+import com.example.coin.service.RelationService;
 import com.example.coin.util.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import static com.example.coin.util.RedisUtil.RELATIONSHIP_REDIS_PREFIX;
-import static com.example.coin.util.RedisUtil.ENTITY_REDIS_PREFIX;
-import static com.example.coin.util.RedisUtil.TWO_HOURS_IN_SECOND;
 
 @RestController
 @RequestMapping("/api/coin")
-public class RelationshipController {
+public class RelationController {
     @Autowired
-    private RelationshipService relationshipService;
+    private RelationService relationService;
 
     //错误信息
     private static final String ID_NOT_EXIST = "节点ID不存在";
     private static final String REL_NOT_EXIST = "或两实体节点间不存在这样的关系";
     @RequestMapping(path = "/getRelationship", method = RequestMethod.GET)
     public ResponseVO getRelationshipById(@RequestParam(value = "id")String id){
-        relationship r = relationshipService.findRelationById(id);
+        Relation r = relationService.getRelationById(id);
         if(r == null) return ResponseVO.buildFailure(ID_NOT_EXIST);
         else return ResponseVO.buildSuccess(r);
     }
@@ -31,7 +28,7 @@ public class RelationshipController {
     public ResponseVO addRelById(@RequestParam(value = "source")String source,
                                  @RequestParam(value = "target")String target,
                                  @RequestParam(value = "relation")String relation){
-        relationship newRel = relationshipService.addRelationship(source, target, relation);
+        Relation newRel = relationService.addRelationship(source, target, relation);
         if(newRel == null){
             return ResponseVO.buildFailure(ID_NOT_EXIST);
         }
@@ -40,33 +37,33 @@ public class RelationshipController {
 
     @RequestMapping(path = "/delRelationship1", method = RequestMethod.POST)
     public ResponseVO deleteRelById(@RequestParam(value = "source")String source, @RequestParam(value = "target")String target, @RequestParam(value = "name")String name){
-        boolean flag = relationshipService.deleteRelationById(source, target, name);
+        boolean flag = relationService.deleteRelationById(source, target, name);
         if(flag) return ResponseVO.buildSuccess();
         else return ResponseVO.buildFailure(ID_NOT_EXIST+REL_NOT_EXIST);
     }
 
     @RequestMapping(path = "/delRelationship2", method = RequestMethod.POST)
     public ResponseVO deleteRelById(@RequestParam(value = "id")String id){
-        boolean flag = relationshipService.deleteRelationById(id);
+        boolean flag = relationService.deleteRelationById(id);
         if(!flag) return ResponseVO.buildFailure(ID_NOT_EXIST);
         else return ResponseVO.buildSuccess();
     }
 
     @RequestMapping(path = "/listRelationships", method = RequestMethod.GET)
     public ResponseVO getRelationList(){
-        List<relationship> allRelationships = relationshipService.findAllRelationships();
-        return ResponseVO.buildSuccess(allRelationships);
+        List<Relation> allRelations = relationService.getAllRelationships();
+        return ResponseVO.buildSuccess(allRelations);
     }
 
     @RequestMapping(path = "/deleteAllRelationships", method = RequestMethod.GET)
     public ResponseVO deleteAllRelationships(){
-        relationshipService.deleteAllRelationships();
+        relationService.deleteAllRelationships();
         return ResponseVO.buildSuccess();
     }
 
     @RequestMapping(path = "/updateRelationship", method = RequestMethod.POST)
-    public ResponseVO updateRelationship(@RequestParam(value = "id")String id, @RequestBody relationship rel){
-        boolean flag = relationshipService.updateRelationshipById(id, rel);
+    public ResponseVO updateRelationship(@RequestParam(value = "id")String id, @RequestBody Relation rel){
+        boolean flag = relationService.updateRelationshipById(id, rel);
         if(!flag) return ResponseVO.buildFailure(ID_NOT_EXIST);
         else return ResponseVO.buildSuccess();
     }

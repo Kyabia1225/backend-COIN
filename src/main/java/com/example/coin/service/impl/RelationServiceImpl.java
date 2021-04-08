@@ -1,17 +1,15 @@
 package com.example.coin.service.impl;
 
-import com.example.coin.DAO.RelationshipRepository;
-import com.example.coin.controller.RedisController;
-import com.example.coin.javaBeans.Entity;
-import com.example.coin.javaBeans.relationship;
+import com.example.coin.DAO.RelationRepository;
+import com.example.coin.po.Entity;
+import com.example.coin.po.Relation;
 import com.example.coin.service.EntityService;
-import com.example.coin.service.RelationshipService;
+import com.example.coin.service.RelationService;
 import com.example.coin.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,12 +19,12 @@ import java.util.Set;
 import static com.example.coin.util.RedisUtil.*;
 
 @Service
-public class RelationshipServiceImpl implements RelationshipService {
+public class RelationServiceImpl implements RelationService {
 
     @Autowired
     private EntityService entityService;
     @Autowired
-    private RelationshipRepository relationshipRepository;
+    private RelationRepository relationRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
     @Autowired
@@ -40,13 +38,13 @@ public class RelationshipServiceImpl implements RelationshipService {
      * @return 关系节点
      */
     @Override
-    public relationship addRelationship(String from, String to, String name) {
-        Entity source = entityService.findEntityById(from);
-        Entity target = entityService.findEntityById(to);
+    public Relation addRelationship(String from, String to, String name) {
+        Entity source = entityService.getEntityById(from);
+        Entity target = entityService.getEntityById(to);
         if(source == null || target == null) return null;
         //如果entity不为空
-        relationship rel = new relationship(from, to, name);
-        relationshipRepository.save(rel);
+        Relation rel = new Relation(from, to, name);
+        relationRepository.save(rel);
         source.getRelatesTo().put(rel.getId(), to);
         target.getRelatesTo().put(rel.getId(), from);
         entityService.updateEntityById(from, source, false);
@@ -63,9 +61,9 @@ public class RelationshipServiceImpl implements RelationshipService {
      * @param rel
      * @return
      */
-    public relationship addRelationship(relationship rel) {
+    public Relation addRelationship(Relation rel) {
         redisUtil.set(RELATIONSHIP_REDIS_PREFIX+rel.getId(), rel, TWO_HOURS_IN_SECOND);
-        return relationshipRepository.save(rel);
+        return relationRepository.save(rel);
     }
 
     /**
@@ -74,13 +72,13 @@ public class RelationshipServiceImpl implements RelationshipService {
      * @param to 被删除的节点关系to的id
      */
     public boolean deleteRelationById(String from, String to, String name) {
-        Entity source = entityService.findEntityById(from);
-        Entity target = entityService.findEntityById(to);
+        Entity source = entityService.getEntityById(from);
+        Entity target = entityService.getEntityById(to);
         if(source == null || target == null) return false;
         //删除关系时，相应的删除节点的relatesTo中的键值对
         //todo: 是否要为source, target, relation建立联合索引？
         Query query = Query.query(Criteria.where("source").is(from).and("target").is(to).and("relation").is(name));
-        relationship deletedRel = mongoTemplate.findAndRemove(query, relationship.class, "relationships");
+        Relation deletedRel = mongoTemplate.findAndRemove(query, Relation.class, "relationships");
         if(deletedRel == null) return false;
         source.getRelatesTo().remove(deletedRel.getId());
         target.getRelatesTo().remove(deletedRel.getId());
@@ -98,12 +96,12 @@ public class RelationshipServiceImpl implements RelationshipService {
      */
     @Override
     public boolean deleteRelationById(String id) {
-        Optional<relationship> optionalRel = relationshipRepository.findById(id);
+        Optional<Relation> optionalRel = relationRepository.findById(id);
         if(!optionalRel.isPresent())
             return false;
-        relationship rel = optionalRel.get();
-        Entity source = entityService.findEntityById(rel.getSource());
-        Entity target = entityService.findEntityById(rel.getTarget());
+        Relation rel = optionalRel.get();
+        Entity source = entityService.getEntityById(rel.getSource());
+        Entity target = entityService.getEntityById(rel.getTarget());
         source.getRelatesTo().remove(rel.getId());
         target.getRelatesTo().remove(rel.getId());
         entityService.updateEntityById(source.getId(), source, false);
@@ -111,7 +109,7 @@ public class RelationshipServiceImpl implements RelationshipService {
         //redisUtil.expire(source.getId(), TWO_HOURS_IN_SECOND);
         //redisUtil.expire(target.getId(), TWO_HOURS_IN_SECOND);
         redisUtil.del(RELATIONSHIP_REDIS_PREFIX+id);
-        relationshipRepository.deleteById(id);
+        relationRepository.deleteById(id);
         return true;
     }
 
@@ -121,16 +119,16 @@ public class RelationshipServiceImpl implements RelationshipService {
      * @return
      */
     @Override
-    public relationship findRelationById(String id) {
-        relationship relInRedis = (relationship) redisUtil.get(RELATIONSHIP_REDIS_PREFIX + id);
+    public Relation getRelationById(String id) {
+        Relation relInRedis = (Relation) redisUtil.get(RELATIONSHIP_REDIS_PREFIX + id);
         if(relInRedis!=null){
             redisUtil.expire(RELATIONSHIP_REDIS_PREFIX+id, TWO_HOURS_IN_SECOND);
             return relInRedis;
         }
         //如果没有在redis中找到
-        Optional<relationship> optionalRel = relationshipRepository.findById(id);
+        Optional<Relation> optionalRel = relationRepository.findById(id);
         if(optionalRel.isPresent()){
-            relationship rel = optionalRel.get();
+            Relation rel = optionalRel.get();
             redisUtil.set(RELATIONSHIP_REDIS_PREFIX+id, rel, TWO_HOURS_IN_SECOND);
             return rel;
         }else{
@@ -144,13 +142,13 @@ public class RelationshipServiceImpl implements RelationshipService {
      * @param r
      */
     @Override
-    public boolean updateRelationshipById(String id, relationship r) {
-        relationship origin = findRelationById(id);
+    public boolean updateRelationshipById(String id, Relation r) {
+        Relation origin = getRelationById(id);
         if(origin == null) return false;
         origin.setRelation(r.getRelation());
         origin.setSource(r.getSource());
         origin.setTarget(r.getTarget());
-        relationshipRepository.save(origin);
+        relationRepository.save(origin);
         redisUtil.set(RELATIONSHIP_REDIS_PREFIX+id, origin, TWO_HOURS_IN_SECOND);
         return true;
     }
@@ -160,8 +158,8 @@ public class RelationshipServiceImpl implements RelationshipService {
      * @return 所有关系的List
      */
     @Override
-    public List<relationship> findAllRelationships() {
-        return relationshipRepository.findAll();
+    public List<Relation> getAllRelationships() {
+        return relationRepository.findAll();
     }
 
     /**
@@ -169,7 +167,7 @@ public class RelationshipServiceImpl implements RelationshipService {
      */
     @Override
     public void deleteAllRelationships() {
-        relationshipRepository.deleteAll();
+        relationRepository.deleteAll();
         Set<String> keys = redisUtil.getKeys();
         for(String key : keys){
             if(key.startsWith(RELATIONSHIP_REDIS_PREFIX)){
@@ -177,7 +175,7 @@ public class RelationshipServiceImpl implements RelationshipService {
             }
         }
         //删除节点中记录的所有关系
-        List<Entity> entities = entityService.findAllEntities();
+        List<Entity> entities = entityService.getAllEntities();
         for(Entity e : entities){
             e.getRelatesTo().clear();
             entityService.updateEntityById(e.getId(), e, false);

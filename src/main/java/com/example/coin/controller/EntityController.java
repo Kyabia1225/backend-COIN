@@ -1,6 +1,6 @@
 package com.example.coin.controller;
 
-import com.example.coin.javaBeans.Entity;
+import com.example.coin.po.Entity;
 import com.example.coin.service.EntityService;
 import com.example.coin.util.ResponseVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class EntityController {
 
     @RequestMapping(path = "/addEntity", method = RequestMethod.POST)
     public ResponseVO addEntity(@RequestBody Entity entity){
-        Entity e = entityService.createEntity(entity);
+        Entity e = entityService.addEntity(entity);
         if(e == null) return ResponseVO.buildFailure(ENTITY_EXIST);
         return ResponseVO.buildSuccess(e);
     }
@@ -36,14 +36,14 @@ public class EntityController {
 
     @RequestMapping(path = "/getEntity", method = RequestMethod.GET)
     public ResponseVO getEntityById(@RequestParam(value = "id")String id){
-        Entity foundEntity = entityService.findEntityById(id);
+        Entity foundEntity = entityService.getEntityById(id);
         if(foundEntity == null) return ResponseVO.buildFailure(ID_NOT_EXIST);
         else return ResponseVO.buildSuccess(foundEntity);
     }
 
     @RequestMapping(path = "/listEntities", method = RequestMethod.GET)
     public ResponseVO getEntityList(){
-        List<Entity> allEntities = entityService.findAllEntities();
+        List<Entity> allEntities = entityService.getAllEntities();
         return ResponseVO.buildSuccess(allEntities);
     }
 
@@ -60,5 +60,9 @@ public class EntityController {
         else return ResponseVO.buildSuccess();
     }
 
+    @RequestMapping(path = "/updateAllLocation", method = RequestMethod.POST)
+    public ResponseVO updateAllLocation(@RequestBody List<Entity> entities){
+        return entityService.updateLocations(entities);
+    }
 
 }

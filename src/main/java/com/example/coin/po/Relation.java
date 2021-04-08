@@ -1,4 +1,4 @@
-package com.example.coin.javaBeans;
+package com.example.coin.po;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -13,7 +13,7 @@ import java.io.Serializable;
 @RequiredArgsConstructor
 
 @Document(collection = "relationships")
-public class relationship implements Serializable {
+public class Relation implements Serializable {
     @Id
     private String id;
     @NonNull

@@ -1,6 +1,6 @@
 package com.example.coin.controller;
 
-import com.example.coin.javaBeans.Entity;
+import com.example.coin.po.Entity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ public class ControllerTest {
     @Autowired
     EntityController entityController;
     @Autowired
-    RelationshipController relationshipController;
+    RelationController relationController;
     @Test
     public void test1() {
         Entity e1 = new Entity("yuzijiang");
@@ -32,8 +32,8 @@ public class ControllerTest {
         entityController.addEntity(e1);
         entityController.addEntity(e2);
         entityController.addEntity(e3);
-        relationshipController.addRelById(e1.getId(), e2.getId(), "loves");
-        relationshipController.addRelById(e1.getId(), e3.getId(), "friendly");
+        relationController.addRelById(e1.getId(), e2.getId(), "loves");
+        relationController.addRelById(e1.getId(), e3.getId(), "friendly");
     }
     //test2是基于test1的测试进行的，自行更改id
     @Test

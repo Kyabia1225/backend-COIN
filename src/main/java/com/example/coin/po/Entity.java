@@ -1,4 +1,4 @@
-package com.example.coin.javaBeans;
+package com.example.coin.po;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -19,12 +19,15 @@ public class Entity implements Serializable {
     private String id;
     @org.springframework.data.redis.core.index.Indexed
     @org.springframework.data.mongodb.core.index.Indexed
-    @Field("name")
     private String name;
-    //fx, fy用来存储节点位置
+    //位置信息
     private Double fx;
     private Double fy;
-    @Field("type")
+    private Double x;
+    private Double y;
+    private Double vx;
+    private Double vy;
+
     private String type;
     //节点属性（键值对形式）
     private HashMap<String, String> properties;
@@ -46,13 +49,5 @@ public class Entity implements Serializable {
         this.type = type;
         this.relatesTo = new HashMap<>();
         this.properties = new HashMap<>();
-    }
-
-    public HashSet<String> associatedEntites(){
-        return new HashSet<>(relatesTo.values());
-    }
-
-    public HashSet<String> associatedRelationships(){
-        return new HashSet<>(relatesTo.keySet());
     }
 }
