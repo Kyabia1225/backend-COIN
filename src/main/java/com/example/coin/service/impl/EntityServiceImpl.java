@@ -6,13 +6,11 @@ import com.example.coin.service.EntityService;
 import com.example.coin.service.RelationService;
 import com.example.coin.util.RedisUtil;
 import com.example.coin.util.ResponseVO;
+import com.example.coin.util.StringDistance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.example.coin.util.RedisUtil.*;
 
@@ -158,6 +156,48 @@ public class EntityServiceImpl implements EntityService {
             redisUtil.set(ENTITY_REDIS_PREFIX+after.getId(), after);
         }
         return ResponseVO.buildSuccess();
+    }
+
+    @Override
+    public Set<String> fuzzySearch(String condition) {
+        if(condition.isEmpty()) return null;
+        Set<String> res = new HashSet<>();
+        List<Entity> entities = entityRepository.findAll();
+        for(Entity entity:entities){
+            int name_distance = StringDistance.calculate(entity.getName(), condition);
+            int type_distance = StringDistance.calculate(entity.getType(), condition);
+            //todo:这个需要衡量 作为匹配的阈值
+            int conditionHalfLength = condition.length()/2+1;
+            String id = entity.getId();
+            //名字距离
+            if(name_distance<conditionHalfLength){
+                res.add(id);
+                break;
+            }
+            //类型距离
+            else if(type_distance<conditionHalfLength){
+                res.add(id);
+                break;
+            }
+
+            boolean keyFlag = false;
+            //属性距离
+            for(String key:entity.getProperties().keySet()){
+                if(StringDistance.calculate(key, condition)<conditionHalfLength){
+                    res.add(id);
+                    keyFlag = true;
+                    break;
+                }
+            }
+            if(keyFlag) break;
+            for(String value:entity.getProperties().values()){
+                if(StringDistance.calculate(value, condition)<conditionHalfLength){
+                    res.add(id);
+                    break;
+                }
+            }
+        }
+        return res;
     }
 
 }

@@ -3,6 +3,7 @@ package com.example.coin.service;
 import com.example.coin.po.Relation;
 
 import java.util.List;
+import java.util.Set;
 
 public interface RelationService {
 
@@ -21,4 +22,7 @@ public interface RelationService {
     List<Relation> getAllRelationships();
     //删除所有关系
     void deleteAllRelationships();
+
+    //搜索相关功能
+    Set<String> fuzzySearch(String condition);
 }

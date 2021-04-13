@@ -6,12 +6,14 @@ import com.example.coin.po.Relation;
 import com.example.coin.service.EntityService;
 import com.example.coin.service.RelationService;
 import com.example.coin.util.RedisUtil;
+import com.example.coin.util.StringDistance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -180,5 +182,20 @@ public class RelationServiceImpl implements RelationService {
             e.getRelatesTo().clear();
             entityService.updateEntityById(e.getId(), e, false);
         }
+    }
+
+    @Override
+    public Set<String> fuzzySearch(String condition) {
+        if(condition.isEmpty()) return null;
+        Set<String> res = new HashSet<>();
+        List<Relation> relations = relationRepository.findAll();
+        for(Relation relation:relations){
+            String relationName = relation.getRelation();
+            int name_distance = StringDistance.calculate(condition, relationName);
+            if(name_distance<(Math.max(relationName.length(), condition.length()))/2+1){
+                res.add(relation.getId());
+            }
+        }
+        return res;
     }
 }

@@ -26,4 +26,6 @@ public interface EntityService {
     //更新所有entity的位置信息
     ResponseVO updateLocations(List<Entity>entities);
 
+    //搜索相关功能
+    Set<String> fuzzySearch(String condition);
 }
