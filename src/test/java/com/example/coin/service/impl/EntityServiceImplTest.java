@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.example.coin.service.RelationService;
+
+import java.util.List;
 import java.util.Set;
 
 
@@ -20,15 +22,13 @@ public class EntityServiceImplTest {
     private RelationService relationService;
     @Test
     public void Test1(){
-        Set<String> set = entityService.fuzzySearch("18");
-        Set<String> set2 =  relationService.fuzzySearch("love");
+        long before = System.currentTimeMillis();
+        Set<String> set = entityService.fuzzySearch("yuziji");
         for(String a:set){
-            System.out.println(a);
+            System.out.println(entityService.getEntityById(a).getName());
         }
-        for(String b:set2){
-            System.out.println(b);
-        }
-
+        long after = System.currentTimeMillis();
+        System.out.println(after - before);
     }
 
 }

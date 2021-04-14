@@ -50,4 +50,26 @@ public class ControllerTest {
         newEntity.getRelatesTo().put("height","171cm");
         entityController.updateEntity(e.getId(), newEntity);
     }
+
+    @Test
+    public void test4(){
+        Entity a = new Entity("a", "char");
+        Entity b = new Entity("b", "char");
+        Entity c = new Entity("c", "char");
+        Entity d = new Entity("d", "char");
+        Entity e = new Entity("e", "char");
+        Entity f = new Entity("f", "char");
+        Entity g = new Entity("g", "char");
+        Entity h = new Entity("h", "char");
+        Entity i = new Entity("i", "char");
+        entityController.addEntity(a);
+        entityController.addEntity(b);
+        entityController.addEntity(c);
+        entityController.addEntity(d);
+        entityController.addEntity(e);
+        entityController.addEntity(f);
+        entityController.addEntity(g);
+        entityController.addEntity(h);
+        entityController.addEntity(i);
+    }
 }

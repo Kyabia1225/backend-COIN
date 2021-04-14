@@ -160,38 +160,34 @@ public class EntityServiceImpl implements EntityService {
 
     @Override
     public Set<String> fuzzySearch(String condition) {
-        if(condition.isEmpty()) return null;
-        Set<String> res = new HashSet<>();
+        if (condition == null) return null;
+        Set<String> res = new HashSet<>(); //长度>=3
         List<Entity> entities = entityRepository.findAll();
-        for(Entity entity:entities){
-            int name_distance = StringDistance.calculate(entity.getName(), condition);
-            int type_distance = StringDistance.calculate(entity.getType(), condition);
-            //todo:这个需要衡量 作为匹配的阈值
-            int conditionHalfLength = condition.length()/2+1;
+        for (Entity entity : entities) {
             String id = entity.getId();
             //名字距离
-            if(name_distance<conditionHalfLength){
+            if (StringDistance.matches(entity.getName(), condition)) {
                 res.add(id);
-                break;
+                continue;
             }
             //类型距离
-            else if(type_distance<conditionHalfLength){
+            else if (StringDistance.matches(entity.getType(), condition)) {
                 res.add(id);
-                break;
+                continue;
             }
 
             boolean keyFlag = false;
             //属性距离
-            for(String key:entity.getProperties().keySet()){
-                if(StringDistance.calculate(key, condition)<conditionHalfLength){
+            for (String key : entity.getProperties().keySet()) {
+                if (StringDistance.matches(key, condition)) {
                     res.add(id);
                     keyFlag = true;
                     break;
                 }
             }
-            if(keyFlag) break;
-            for(String value:entity.getProperties().values()){
-                if(StringDistance.calculate(value, condition)<conditionHalfLength){
+            if (keyFlag) continue;
+            for (String value : entity.getProperties().values()) {
+                if (StringDistance.matches(value, condition)) {
                     res.add(id);
                     break;
                 }
@@ -199,5 +195,4 @@ public class EntityServiceImpl implements EntityService {
         }
         return res;
     }
-
 }

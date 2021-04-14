@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class StringDistanceTest {
     @Test
     public void Test(){
-        int calculate = StringDistance.calculate("mamama", "mama");
-        Assert.assertTrue(calculate == 2);
+        int calculate = StringDistance.calculate("huixiang","ca");
+        System.out.println(calculate);
     }
 }

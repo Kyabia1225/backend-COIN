@@ -13,10 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.example.coin.util.RedisUtil.*;
 
@@ -52,8 +49,6 @@ public class RelationServiceImpl implements RelationService {
         entityService.updateEntityById(from, source, false);
         entityService.updateEntityById(to, target, false);
         //保存到缓存中
-        //redisUtil.expire(from, TWO_HOURS_IN_SECOND);
-        //redisUtil.expire(to, TWO_HOURS_IN_SECOND);
         redisUtil.set(RELATIONSHIP_REDIS_PREFIX+rel.getId(), rel, TWO_HOURS_IN_SECOND);
         return rel;
     }
@@ -86,8 +81,6 @@ public class RelationServiceImpl implements RelationService {
         target.getRelatesTo().remove(deletedRel.getId());
         entityService.updateEntityById(from, source, false);
         entityService.updateEntityById(to, target, false);
-        //redisUtil.expire(from, TWO_HOURS_IN_SECOND);
-        //redisUtil.expire(to, TWO_HOURS_IN_SECOND);
         redisUtil.del(RELATIONSHIP_REDIS_PREFIX+deletedRel.getId());
         return true;
     }
@@ -108,8 +101,6 @@ public class RelationServiceImpl implements RelationService {
         target.getRelatesTo().remove(rel.getId());
         entityService.updateEntityById(source.getId(), source, false);
         entityService.updateEntityById(target.getId(), target, false);
-        //redisUtil.expire(source.getId(), TWO_HOURS_IN_SECOND);
-        //redisUtil.expire(target.getId(), TWO_HOURS_IN_SECOND);
         redisUtil.del(RELATIONSHIP_REDIS_PREFIX+id);
         relationRepository.deleteById(id);
         return true;
@@ -190,9 +181,7 @@ public class RelationServiceImpl implements RelationService {
         Set<String> res = new HashSet<>();
         List<Relation> relations = relationRepository.findAll();
         for(Relation relation:relations){
-            String relationName = relation.getRelation();
-            int name_distance = StringDistance.calculate(condition, relationName);
-            if(name_distance<(Math.max(relationName.length(), condition.length()))/2+1){
+            if(StringDistance.matches(relation.getRelation(), condition)){
                 res.add(relation.getId());
             }
         }
