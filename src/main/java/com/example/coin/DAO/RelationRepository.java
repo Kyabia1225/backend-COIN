@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface RelationRepository extends MongoRepository<Relation, String> {
     Relation findRelationById(String id);
-    List<Relation> findRelationBySource(String source);
+    List<Relation> findRelationsByRelation(String source);
 }

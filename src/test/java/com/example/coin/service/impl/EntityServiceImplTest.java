@@ -9,7 +9,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.example.coin.service.RelationService;
 
-import java.util.List;
 import java.util.Set;
 
 

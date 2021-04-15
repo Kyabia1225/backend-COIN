@@ -1,13 +1,9 @@
-/*
 package com.example.coin.DAO;
 
-import com.example.coin.pojo.Entity;
-import com.example.coin.pojo.relationship;
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
+import com.example.coin.po.Entity;
+import com.example.coin.po.Relation;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -18,52 +14,42 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@FixMethodOrder(MethodSorters.JVM)
-class RelationshipRepositoryTest {
+class RelationRepositoryTest {
     @Autowired
-    RelationshipRepository relationshipRepository;
-
+    RelationRepository relationRepository;
+    @Autowired
+    EntityRepository entityRepository;
     @Test
     void saveTest(){
         Entity from = new Entity("from");
         Entity to = new Entity("to");
-        relationship rel1 = new relationship(from, to, "connects");
-        relationship rel2 = relationshipRepository.save(rel1);
-        assertEquals(rel1, rel2);
+        entityRepository.save(from);
+        entityRepository.save(to);
+        Relation rel = new Relation(from.getId(), to.getId(), "connects");
+        relationRepository.save(rel);
     }
 
     @Test
     void findTest(){
-        Entity from = new Entity("from");
-        Entity to = new Entity("to");
-        relationship rel1 = new relationship(from, to, "connects");
-        relationshipRepository.save(rel1);
-        Long id = rel1.getId();
-        relationship rel2 = relationshipRepository.findById(id).get();
-        assertEquals(rel1, rel2);
+        assertEquals(1, relationRepository.findRelationsByRelation("connects").size());
     }
 
     @Test
     void deleteTest(){
-        Entity from = new Entity("from");
-        Entity to = new Entity("to");
-        relationship rel1 = new relationship(from, to, "connects");
-        relationshipRepository.save(rel1);
-        Long id = rel1.getId();
-        relationshipRepository.deleteById(id);
-        assertFalse(relationshipRepository.findById(id).isPresent());
-
+        String id = relationRepository.findRelationsByRelation("connects").get(0).getId();
+        relationRepository.deleteById(id);
+        assertEquals(0, relationRepository.findRelationsByRelation("connects").size());
     }
 
     @Test
     void findAllTest(){
-        assertTrue(((List<relationship>)relationshipRepository.findAll()).size()>0);
+        assertTrue(((List<Relation>) relationRepository.findAll()).size()==0);
     }
 
     @Test
     void deleteAllTest(){
-        relationshipRepository.deleteAll();
-        assertTrue(((List<relationship>)relationshipRepository.findAll()).size() == 0);
+        relationRepository.deleteAll();
+        assertTrue(((List<Relation>) relationRepository.findAll()).size() == 0);
     }
 
-}*/
+}

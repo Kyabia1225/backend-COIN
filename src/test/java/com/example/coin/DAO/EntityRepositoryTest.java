@@ -1,23 +1,19 @@
-/*
 package com.example.coin.DAO;
 
-import com.example.coin.pojo.Entity;
-import org.junit.FixMethodOrder;
+import com.example.coin.po.Entity;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@FixMethodOrder(MethodSorters.JVM)
+//请按照顺序一条一条执行， Test方法随机测试顺序
 class EntityRepositoryTest {
     @Autowired
     EntityRepository entityRepository;
@@ -31,24 +27,22 @@ class EntityRepositoryTest {
 
     @Test
     void findTest(){
-        Entity entity1 = new Entity("find");
-        entityRepository.save(entity1);
-        Optional<Entity>optionalEntity = entityRepository.findById(entity1.getId());
-        Entity entity2 = optionalEntity.get();
-        assertEquals(entity1, entity2);
+        List<Entity> entities = entityRepository.findEntitiesByName("save");
+        assertEquals(1, entities.size());
     }
     @Test
     void deleteTest(){
-        Entity entity1 = new Entity("delete");
-        entityRepository.save(entity1);
-        Long id = entity1.getId();
+        String id = entityRepository.findEntitiesByName("save").get(0).getId();
         entityRepository.deleteById(id);
-        assertFalse(entityRepository.findById(id).isPresent());
+        assertEquals(0, entityRepository.findEntitiesByName("save").size());
     }
 
     @Test
     void findAllTest(){
-        assertTrue(((List<Entity>)entityRepository.findAll()).size()>0);
+        entityRepository.save(new Entity("a","a"));
+        entityRepository.save(new Entity("b","a"));
+        entityRepository.save(new Entity("c","a"));
+        assertTrue(((List<Entity>)entityRepository.findAll()).size() == 3);
     }
 
     @Test
@@ -56,4 +50,4 @@ class EntityRepositoryTest {
         entityRepository.deleteAll();
         assertTrue(((List<Entity>)entityRepository.findAll()).size() == 0);
     }
-}*/
+}
