@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/coin")
@@ -66,6 +67,16 @@ public class RelationController {
         boolean flag = relationService.updateRelationshipById(id, rel);
         if(!flag) return ResponseVO.buildFailure(ID_NOT_EXIST);
         else return ResponseVO.buildSuccess();
+    }
+
+    @GetMapping(path = "relationSearch")
+    public  ResponseVO searchRelation(@RequestParam(value = "keyword")String keyword){
+        Set<String> res = relationService.fuzzySearch(keyword);
+        if(res.isEmpty()){
+            return ResponseVO.buildFailure("未查找到相关关系");
+        }else{
+            return ResponseVO.buildSuccess(res);
+        }
     }
 
 }

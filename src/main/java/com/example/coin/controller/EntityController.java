@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import java.util.Set;
 
 
 @RestController
@@ -63,6 +63,15 @@ public class EntityController {
     @RequestMapping(path = "/updateAllLocation", method = RequestMethod.POST)
     public ResponseVO updateAllLocation(@RequestBody List<Entity> entities){
         return entityService.updateLocations(entities);
+    }
+
+    @GetMapping(path = "/entitySearch")
+    public ResponseVO searchEntity(@RequestParam(value = "keyword")String keyword){
+        Set<String> result = entityService.fuzzySearch(keyword);
+        if(result.isEmpty()) return ResponseVO.buildFailure("未查找到相关实体");
+        else{
+            return ResponseVO.buildSuccess(result);
+        }
     }
 
 }
