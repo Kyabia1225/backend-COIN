@@ -1,8 +1,10 @@
+/*
 package com.example.coin.DAO;
 
 import com.example.coin.po.Entity;
 import com.example.coin.po.Relation;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.OrderWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,10 +43,6 @@ class RelationRepositoryTest {
         assertEquals(0, relationRepository.findRelationsByRelation("connects").size());
     }
 
-    @Test
-    void findAllTest(){
-        assertTrue(((List<Relation>) relationRepository.findAll()).size()==0);
-    }
 
     @Test
     void deleteAllTest(){
@@ -53,3 +51,4 @@ class RelationRepositoryTest {
     }
 
 }
+*/
