@@ -72,4 +72,5 @@ public class ControllerTest {
         entityController.addEntity(h);
         entityController.addEntity(i);
     }
+
 }
