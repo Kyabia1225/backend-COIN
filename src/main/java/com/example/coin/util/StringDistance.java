@@ -25,6 +25,6 @@ public class StringDistance {
     public static boolean matches(String A, String B){
         if(A == null||B == null) return false;
         int max_length = Math.max(A.length(), B.length());
-        return calculate(A, B)<=max_length/3;
+        return calculate(A, B)<=max_length/3+1;
     }
 }

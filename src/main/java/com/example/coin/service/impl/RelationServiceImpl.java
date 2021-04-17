@@ -59,8 +59,16 @@ public class RelationServiceImpl implements RelationService {
      * @return
      */
     public Relation addRelationship(Relation rel) {
-        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+rel.getId(), rel, TWO_HOURS_IN_SECOND);
-        return relationRepository.save(rel);
+        Entity source = entityService.getEntityById(rel.getSource());
+        Entity target = entityService.getEntityById(rel.getTarget());
+        if(source == null || target == null) return null;
+        Relation saved = relationRepository.save(rel);
+        source.getRelatesTo().put(rel.getId(), target.getId());
+        target.getRelatesTo().put(rel.getId(), source.getId());
+        entityService.updateEntityById(source.getId(), source, false);
+        entityService.updateEntityById(target.getId(), target, false);
+        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+saved.getId(), saved, TWO_HOURS_IN_SECOND);
+        return saved;
     }
 
     /**
