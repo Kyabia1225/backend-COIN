@@ -11,7 +11,6 @@ pipeline {
                     steps{
                         echo 'Test And Build'
                         sh 'mvn clean package -Dmaven.test.failure.ignore=true'
-                        //之后做jacoco测试
                     }
          }
 
