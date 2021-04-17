@@ -5,7 +5,8 @@ pipeline {
          stage('Maven Build and Test') {
                     steps{
                         echo 'Test And Build'
-                        sh 'mvn clean package -Dmaven.test.failure.ignore=true'
+                        sh 'mvn clean package jacoco:report -Dmaven.test.failure.ignore=true'
+                        jacoco()
                     }
          }
 
