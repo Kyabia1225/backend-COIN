@@ -14,7 +14,7 @@ pipeline {
                     steps{
                         echo 'COIN Deploy'
                         sh 'pwd'
-                        sh 'cd target && nohup java -jar coin.jar'
+                        sh 'cd target && nohup java -jar coin.jar >> Log.log 2>&1 &'
                     }
          }
     }
