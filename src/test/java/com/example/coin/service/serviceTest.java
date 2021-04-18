@@ -110,6 +110,11 @@ public class serviceTest {
 
     @Test
     public void test08(){
+        entityService.updateLocations(entityService.getAllEntities());
+
+    }
+    @Test
+    public void test09(){
         redisUtil.flushdb();
         entityService.deleteAllEntities();
         relationService.deleteAllRelationships();
