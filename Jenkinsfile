@@ -13,8 +13,8 @@ pipeline {
          stage('Deploy'){
                     steps{
                         echo 'COIN Deploy'
-                        sh 'pwd'
-                        sh 'cd target && nohup java -jar coin.jar > Log.log 2>&1 &'
+                        sh "if(ps -aux | grep target/RemoteMates.jar | grep -v grep)then(ps -aux | grep target/RemoteMates.jar | grep -v grep | awk {'print \$2'} | xargs kill -9)fi"
+                        sh 'nohup java -jar target/RemoteMates.jar > Log.log 2>&1 &'
                     }
          }
     }
