@@ -49,7 +49,7 @@ public class RelationServiceImpl implements RelationService {
         entityService.updateEntityById(from, source, false);
         entityService.updateEntityById(to, target, false);
         //保存到缓存中
-        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+rel.getId(), rel, TWO_HOURS_IN_SECOND);
+        //redisUtil.set(RELATIONSHIP_REDIS_PREFIX+rel.getId(), rel, TWO_HOURS_IN_SECOND);
         return rel;
     }
 

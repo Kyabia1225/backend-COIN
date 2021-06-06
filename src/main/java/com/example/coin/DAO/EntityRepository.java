@@ -9,4 +9,5 @@ public interface EntityRepository extends MongoRepository<Entity, String> {
     Entity findEntityById(String id);
     List<Entity> findEntitiesByType(String type);
     List<Entity> findEntitiesByName(String name);
+    Entity findEntityByBgmIdAndType(String bgmId, String type);
 }

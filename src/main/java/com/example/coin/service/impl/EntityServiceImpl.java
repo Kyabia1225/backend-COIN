@@ -68,17 +68,18 @@ public class EntityServiceImpl implements EntityService {
      */
     @Override
     public Entity getEntityById(String id) {
-        Entity entityInRedis = (Entity)redisUtil.get(ENTITY_REDIS_PREFIX + id);
+        /*Entity entityInRedis = (Entity)redisUtil.get(ENTITY_REDIS_PREFIX + id);
         if(entityInRedis!=null) {
             redisUtil.expire(ENTITY_REDIS_PREFIX+id, TWO_HOURS_IN_SECOND);
             return entityInRedis;
         }
-        //如果在redis中没有查询到
+        //如果在redis中没有查询到*/
+        if(id == null) return null;
         Optional<Entity>optionalEntity =  entityRepository.findById(id);
         if(!optionalEntity.isPresent()) return null;
         else{
             Entity e = optionalEntity.get();
-            redisUtil.set(ENTITY_REDIS_PREFIX+id, e, TWO_HOURS_IN_SECOND);
+            //redisUtil.set(ENTITY_REDIS_PREFIX+id, e, TWO_HOURS_IN_SECOND);
             return e;
         }
     }
@@ -103,7 +104,7 @@ public class EntityServiceImpl implements EntityService {
         }
         origin.setRelatesTo(e.getRelatesTo());
         entityRepository.save(origin);
-        redisUtil.set(ENTITY_REDIS_PREFIX+id, origin, TWO_HOURS_IN_SECOND);
+        //redisUtil.set(ENTITY_REDIS_PREFIX+id, origin, TWO_HOURS_IN_SECOND);
         return true;
     }
 

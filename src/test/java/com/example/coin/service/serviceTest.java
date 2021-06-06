@@ -34,12 +34,8 @@ public class serviceTest {
 
     @Test
     public void test01(){
-        Entity entity1 = entityService.addEntity(new Entity("yuzijiang"));
-        Entity entity2 = entityService.addEntity(new Entity("huixiang"));
-        Entity entity3 = entityService.addEntity(new Entity("shabi"));
+        Entity entity1 = entityService.addEntity(new Entity("test 20210606"));
         Assert.assertNotNull(entity1.getId());
-        Assert.assertNotNull(entity2.getId());
-        Assert.assertNotNull(entity3.getId());
     }
 
     @Test

@@ -11,10 +11,12 @@ public class Anime {
     private String animeId;
     private String japaneseName;
     private String title;
-    private Integer length;
+    private String length;
     private String startDate;
     private String director;
     private String directorId;
+    private String company;
+    private String CompanyId;
     private Double score;
     private Integer ranking;
     private String description;
@@ -47,11 +49,11 @@ public class Anime {
         this.title = title;
     }
 
-    public Integer getLength() {
+    public String getLength() {
         return length;
     }
 
-    public void setLength(Integer length) {
+    public void setLength(String length) {
         this.length = length;
     }
 
@@ -73,6 +75,22 @@ public class Anime {
 
     public String getDirectorId() {
         return directorId;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getCompanyId() {
+        return CompanyId;
+    }
+
+    public void setCompanyId(String companyId) {
+        CompanyId = companyId;
     }
 
     public void setDirectorId(String directorId) {
