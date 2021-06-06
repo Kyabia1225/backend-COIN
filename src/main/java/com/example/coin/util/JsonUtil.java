@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONReader;
+import com.example.coin.DAO.*;
 import com.example.coin.po.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,11 +17,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JsonUtil {
-    public static Reader readJsonFile(String fileName)throws FileNotFoundException {
+    @Autowired
+    EntityRepository entityRepository;
+    @Autowired
+    RelationRepository relationRepository;
+    @Autowired
+    AnimeRepository animeRepository;
+    @Autowired
+    AnimeCompanyRepository animeCompanyRepository;
+    @Autowired
+    AnimeCharacterRepository animeCharacterRepository;
+    @Autowired
+    AnimeCVRepository animeCVRepository;
+    @Autowired
+    AnimeDirectorRepository animeDirectorRepository;
+
+    public Reader readJsonFile(String fileName)throws FileNotFoundException {
         return new FileReader(fileName);
     }
 
-    public static void analyseAnimeJson(Reader reader){
+    public void analyseAnimeJson(Reader reader){
         JSONReader jsonArray = new JSONReader(reader);
         jsonArray.startArray();
         while (jsonArray.hasNext()){
@@ -63,7 +80,7 @@ public class JsonUtil {
         jsonArray.close();
     }
 
-    public static void analyseAnimeCharacterJson(Reader reader){
+    public void analyseAnimeCharacterJson(Reader reader){
         JSONReader jsonArray = new JSONReader(reader);
         jsonArray.startArray();
         while (jsonArray.hasNext()) {
@@ -80,18 +97,19 @@ public class JsonUtil {
             character.setOtherNames(otherNameList);
             character.setDescription((String) jsonOne.get("description"));
             character.setBirthday(dateAddress((String) jsonOne.get("birthday")));
+            animeCharacterRepository.save(character);
             Entity e = new Entity();
             e.setType("AnimeCharacter");
             e.setBgmId(character.getCharacterId());
             e.setProperties(null);
             e.setName(character.getName());
-            //todo: 保存节点进数据库
+            entityRepository.save(e);
         }
         jsonArray.endArray();
         jsonArray.close();
     }
 
-    public static void analyseAnimeCompanyJson(Reader reader){
+    public void analyseAnimeCompanyJson(Reader reader){
         JSONReader jsonArray = new JSONReader(reader);
         jsonArray.startArray();
         while (jsonArray.hasNext()) {
@@ -119,7 +137,7 @@ public class JsonUtil {
         jsonArray.close();
     }
 
-    public static void analyseAnimeCVJson(Reader reader){
+    public void analyseAnimeCVJson(Reader reader){
         JSONReader jsonArray = new JSONReader(reader);
         jsonArray.startArray();
         while (jsonArray.hasNext()) {
@@ -148,7 +166,7 @@ public class JsonUtil {
         jsonArray.close();
     }
 
-    public static void analyseAnimeDirector(Reader reader){
+    public void analyseAnimeDirector(Reader reader){
         JSONReader jsonArray = new JSONReader(reader);
         jsonArray.startArray();
         while (jsonArray.hasNext()) {
@@ -177,7 +195,7 @@ public class JsonUtil {
         jsonArray.close();
     }
 
-    public static String dateAddress(String date){
+    public String dateAddress(String date){
         Pattern pattern = Pattern.compile("\\d{4}年\\d{1,2}月\\d{1,2}日|\\d{4}-\\d{1,2}-\\d{1,2}");
         Matcher matcher = pattern.matcher(date);
         String addressedDate;
