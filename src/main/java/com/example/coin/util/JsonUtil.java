@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONReader;
 import com.example.coin.po.Anime;
+import com.example.coin.po.AnimeCharacter;
+import com.example.coin.po.Entity;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -34,7 +36,7 @@ public class JsonUtil {
                 String date = (String)  jsonOne.get("startDate");
                 Pattern pattern = Pattern.compile("\\d{4}年\\d{1,2}月\\d{1,2}日|\\d{4}-\\d{1,2}-\\d{1,2}");
                 Matcher matcher = pattern.matcher(date);
-                String addressedDate = null;
+                String addressedDate;
                 if(matcher.find()){
                     addressedDate = matcher.group().replace("年", "-").replace("月", "-").replace("日", "");
                 }else{
@@ -61,6 +63,41 @@ public class JsonUtil {
                 }
                 anime.setCharacterList(characterList);
             }
+            //转化成节点
+            Entity e = new Entity();
+            e.setType("Anime");
+            e.setBgmId(anime.getAnimeId());
+            e.setProperties(null);
+            e.setName(anime.getTitle());
+            //todo: 保存节点进数据库
+        }
+        jsonArray.endArray();
+        jsonArray.close();
+    }
+
+    public static void analyseAnimeCharacterJson(Reader reader){
+        JSONReader jsonArray = new JSONReader(reader);
+        jsonArray.startArray();
+        while (jsonArray.hasNext()) {
+            JSONObject jsonOne = (JSONObject) jsonArray.readObject();
+            AnimeCharacter character = new AnimeCharacter();
+            character.setCharacterId((String) jsonOne.get("character_id"));
+            character.setName((String) jsonOne.get("name"));
+            character.setGender((String) jsonOne.get("gender"));
+            JSONArray otherNames = (JSONArray) jsonOne.get("other_names");
+            List<String> otherNameList = new ArrayList<>(otherNames.size());
+            for(Object tmp : otherNames){
+                otherNameList.add((String) tmp);
+            }
+            character.setOtherNames(otherNameList);
+            character.setDescription((String) jsonOne.get("description"));
+            character.setBirthday((String) jsonOne.get("birthday"));
+            Entity e = new Entity();
+            e.setType("AnimeCharacter");
+            e.setBgmId(character.getCharacterId());
+            e.setProperties(null);
+            e.setName(character.getName());
+            //todo: 保存节点进数据库
         }
         jsonArray.endArray();
         jsonArray.close();
