@@ -5,25 +5,26 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collection = "animeCharacter")
-public class AnimeCharacter {
+@Document(collection = "animeCV")
+public class AnimeCV {
     @Id
-    private String characterId;
+    private String cvId;
     private String name;
-    private String gender;
     private List<String> otherNames;
+    private String gender;
+    private String profession;
     private String description;
     private String birthday;
 
-    public AnimeCharacter() {
+    public AnimeCV() {
     }
 
-    public String getCharacterId() {
-        return characterId;
+    public String getCvId() {
+        return cvId;
     }
 
-    public void setCharacterId(String characterId) {
-        this.characterId = characterId;
+    public void setCvId(String cvId) {
+        this.cvId = cvId;
     }
 
     public String getName() {
@@ -34,6 +35,14 @@ public class AnimeCharacter {
         this.name = name;
     }
 
+    public List<String> getOtherNames() {
+        return otherNames;
+    }
+
+    public void setOtherNames(List<String> otherNames) {
+        this.otherNames = otherNames;
+    }
+
     public String getGender() {
         return gender;
     }
@@ -42,12 +51,12 @@ public class AnimeCharacter {
         this.gender = gender;
     }
 
-    public List<String> getOtherNames() {
-        return otherNames;
+    public String getProfession() {
+        return profession;
     }
 
-    public void setOtherNames(List<String> otherNames) {
-        this.otherNames = otherNames;
+    public void setProfession(String profession) {
+        this.profession = profession;
     }
 
     public String getDescription() {

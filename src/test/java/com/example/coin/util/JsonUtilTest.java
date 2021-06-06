@@ -20,4 +20,19 @@ public class JsonUtilTest {
         JsonUtil.analyseAnimeCharacterJson(reader);
     }
 
+    @Test
+    public void test03() throws FileNotFoundException {
+        Reader reader = JsonUtil.readJsonFile("D:\\company_out");
+        JsonUtil.analyseAnimeCompanyJson(reader);
+    }
+    @Test
+    public void test04() throws FileNotFoundException {
+        Reader reader = JsonUtil.readJsonFile("D:\\cv_out");
+        JsonUtil.analyseAnimeCVJson(reader);
+    }
+    @Test
+    public void test05() throws FileNotFoundException {
+        Reader reader = JsonUtil.readJsonFile("D:\\director_out");
+        JsonUtil.analyseAnimeDirector(reader);
+    }
 }
