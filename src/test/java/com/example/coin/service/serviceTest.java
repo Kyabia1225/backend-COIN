@@ -4,9 +4,9 @@ import com.example.coin.DAO.EntityRepository;
 import com.example.coin.DAO.RelationRepository;
 import com.example.coin.po.Entity;
 import com.example.coin.po.Relation;
-import com.example.coin.util.RedisUtil;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -20,6 +20,7 @@ import java.util.Set;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore
 public class serviceTest {
     @Autowired
     private EntityService entityService;
@@ -29,8 +30,6 @@ public class serviceTest {
     private EntityRepository entityRepository;
     @Autowired
     private RelationRepository relationRepository;
-    @Autowired
-    private RedisUtil redisUtil;
 
     @Test
     public void test01(){
@@ -111,7 +110,6 @@ public class serviceTest {
     }
     @Test
     public void test09(){
-        redisUtil.flushdb();
         entityService.deleteAllEntities();
         relationService.deleteAllRelationships();
     }

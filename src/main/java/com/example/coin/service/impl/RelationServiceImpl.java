@@ -5,7 +5,6 @@ import com.example.coin.po.Entity;
 import com.example.coin.po.Relation;
 import com.example.coin.service.EntityService;
 import com.example.coin.service.RelationService;
-import com.example.coin.util.RedisUtil;
 import com.example.coin.util.StringDistance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -14,8 +13,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static com.example.coin.util.RedisUtil.*;
 
 @Service
 public class RelationServiceImpl implements RelationService {
@@ -26,8 +23,6 @@ public class RelationServiceImpl implements RelationService {
     private RelationRepository relationRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
-    @Autowired
-    private RedisUtil redisUtil;
 
     /**
      *  如果实体节点不存在 返回null
@@ -48,8 +43,6 @@ public class RelationServiceImpl implements RelationService {
         target.getRelatesTo().put(rel.getId(), from);
         entityService.updateEntityById(from, source, false);
         entityService.updateEntityById(to, target, false);
-        //保存到缓存中
-        //redisUtil.set(RELATIONSHIP_REDIS_PREFIX+rel.getId(), rel, TWO_HOURS_IN_SECOND);
         return rel;
     }
 
@@ -67,7 +60,6 @@ public class RelationServiceImpl implements RelationService {
         target.getRelatesTo().put(rel.getId(), source.getId());
         entityService.updateEntityById(source.getId(), source, false);
         entityService.updateEntityById(target.getId(), target, false);
-        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+saved.getId(), saved, TWO_HOURS_IN_SECOND);
         return saved;
     }
 
@@ -89,7 +81,6 @@ public class RelationServiceImpl implements RelationService {
         target.getRelatesTo().remove(deletedRel.getId());
         entityService.updateEntityById(from, source, false);
         entityService.updateEntityById(to, target, false);
-        redisUtil.del(RELATIONSHIP_REDIS_PREFIX+deletedRel.getId());
         return true;
     }
 
@@ -109,7 +100,6 @@ public class RelationServiceImpl implements RelationService {
         target.getRelatesTo().remove(rel.getId());
         entityService.updateEntityById(source.getId(), source, false);
         entityService.updateEntityById(target.getId(), target, false);
-        redisUtil.del(RELATIONSHIP_REDIS_PREFIX+id);
         relationRepository.deleteById(id);
         return true;
     }
@@ -121,20 +111,8 @@ public class RelationServiceImpl implements RelationService {
      */
     @Override
     public Relation getRelationById(String id) {
-        Relation relInRedis = (Relation) redisUtil.get(RELATIONSHIP_REDIS_PREFIX + id);
-        if(relInRedis!=null){
-            redisUtil.expire(RELATIONSHIP_REDIS_PREFIX+id, TWO_HOURS_IN_SECOND);
-            return relInRedis;
-        }
-        //如果没有在redis中找到
         Optional<Relation> optionalRel = relationRepository.findById(id);
-        if(optionalRel.isPresent()){
-            Relation rel = optionalRel.get();
-            redisUtil.set(RELATIONSHIP_REDIS_PREFIX+id, rel, TWO_HOURS_IN_SECOND);
-            return rel;
-        }else{
-            return null;
-        }
+        return optionalRel.orElse(null);
     }
 
     /**
@@ -150,7 +128,6 @@ public class RelationServiceImpl implements RelationService {
         origin.setSource(r.getSource());
         origin.setTarget(r.getTarget());
         relationRepository.save(origin);
-        redisUtil.set(RELATIONSHIP_REDIS_PREFIX+id, origin, TWO_HOURS_IN_SECOND);
         return true;
     }
 
@@ -169,12 +146,6 @@ public class RelationServiceImpl implements RelationService {
     @Override
     public void deleteAllRelationships() {
         relationRepository.deleteAll();
-        Set<String> keys = redisUtil.getKeys();
-        for(String key : keys){
-            if(key.startsWith(RELATIONSHIP_REDIS_PREFIX)){
-                redisUtil.del(key);
-            }
-        }
         //删除节点中记录的所有关系
         List<Entity> entities = entityService.getAllEntities();
         for(Entity e : entities){

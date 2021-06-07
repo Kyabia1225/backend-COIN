@@ -4,7 +4,6 @@ import com.example.coin.DAO.EntityRepository;
 import com.example.coin.po.Entity;
 import com.example.coin.service.EntityService;
 import com.example.coin.service.RelationService;
-import com.example.coin.util.RedisUtil;
 import com.example.coin.util.ResponseVO;
 import com.example.coin.util.StringDistance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.example.coin.util.RedisUtil.*;
 
 @Service
 public class EntityServiceImpl implements EntityService {
@@ -20,8 +18,6 @@ public class EntityServiceImpl implements EntityService {
     private EntityRepository entityRepository;
     @Autowired
     private RelationService relationService;
-    @Autowired
-    private RedisUtil redisUtil;
 
     /**
      * 将关系节点持久化到数据库中
@@ -30,9 +26,7 @@ public class EntityServiceImpl implements EntityService {
      */
     @Override
     public Entity addEntity(Entity entity) {
-        Entity e = entityRepository.save(entity);
-        redisUtil.set(ENTITY_REDIS_PREFIX+e.getId(), e, TWO_HOURS_IN_SECOND);
-        return e;
+        return entityRepository.save(entity);
     }
 
     /**
@@ -51,12 +45,9 @@ public class EntityServiceImpl implements EntityService {
             Entity correspondingEntity = getEntityById(correspondingEntityId);
             correspondingEntity.getRelatesTo().remove(relId);
             updateEntityById(correspondingEntityId, correspondingEntity, false);
-            //redisUtil.expire(ENTITY_REDIS_PREFIX+correspondingEntityId, TWO_HOURS_IN_SECOND);//update方法中redis重新设置了过期时间
             //然后删除这个关系
-            redisUtil.del(RELATIONSHIP_REDIS_PREFIX+relId);
             relationService.deleteRelationById(relId);
         }
-        redisUtil.del(ENTITY_REDIS_PREFIX+id);
         entityRepository.deleteById(id);
         return true;
     }
@@ -68,20 +59,9 @@ public class EntityServiceImpl implements EntityService {
      */
     @Override
     public Entity getEntityById(String id) {
-        /*Entity entityInRedis = (Entity)redisUtil.get(ENTITY_REDIS_PREFIX + id);
-        if(entityInRedis!=null) {
-            redisUtil.expire(ENTITY_REDIS_PREFIX+id, TWO_HOURS_IN_SECOND);
-            return entityInRedis;
-        }
-        //如果在redis中没有查询到*/
         if(id == null) return null;
         Optional<Entity>optionalEntity =  entityRepository.findById(id);
-        if(!optionalEntity.isPresent()) return null;
-        else{
-            Entity e = optionalEntity.get();
-            //redisUtil.set(ENTITY_REDIS_PREFIX+id, e, TWO_HOURS_IN_SECOND);
-            return e;
-        }
+        return optionalEntity.orElse(null);
     }
 
     /**
@@ -104,7 +84,6 @@ public class EntityServiceImpl implements EntityService {
         }
         origin.setRelatesTo(e.getRelatesTo());
         entityRepository.save(origin);
-        //redisUtil.set(ENTITY_REDIS_PREFIX+id, origin, TWO_HOURS_IN_SECOND);
         return true;
     }
 
@@ -125,8 +104,6 @@ public class EntityServiceImpl implements EntityService {
         entityRepository.deleteAll();
         //删除所有实体节点的同时删除所有关系节点
         relationService.deleteAllRelationships();
-        //释放所有缓存
-        redisUtil.flushdb();
     }
 
     @Override
@@ -154,7 +131,6 @@ public class EntityServiceImpl implements EntityService {
             after.setVx(before.getVx());
             after.setVy(before.getVy());
             entityRepository.save(after);
-            redisUtil.set(ENTITY_REDIS_PREFIX+after.getId(), after);
         }
         return ResponseVO.buildSuccess();
     }

@@ -4,6 +4,7 @@ import com.example.coin.po.Entity;
 import com.example.coin.po.Relation;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -16,6 +17,7 @@ import java.util.List;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore
 public class repositoryTest {
     @Autowired
     private EntityRepository entityRepository;
