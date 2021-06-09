@@ -1,5 +1,6 @@
 package com.example.coin.service.impl;
 
+import com.example.coin.DAO.EntityRepository;
 import com.example.coin.DAO.RelationRepository;
 import com.example.coin.po.Entity;
 import com.example.coin.po.Relation;
@@ -18,7 +19,9 @@ import java.util.*;
 public class RelationServiceImpl implements RelationService {
 
     @Autowired
-    private EntityService entityService;
+    private EntityRepository entityRepository;
+    @Autowired
+    private EntityService  entityService;
     @Autowired
     private RelationRepository relationRepository;
     @Autowired
@@ -33,8 +36,8 @@ public class RelationServiceImpl implements RelationService {
      */
     @Override
     public Relation addRelationship(String from, String to, String name) {
-        Entity source = entityService.getEntityById(from);
-        Entity target = entityService.getEntityById(to);
+        Entity source = entityRepository.findEntityById(from);
+        Entity target = entityRepository.findEntityById(to);
         if(source == null || target == null) return null;
         //如果entity不为空
         Relation rel = new Relation(from, to, name);
@@ -52,8 +55,8 @@ public class RelationServiceImpl implements RelationService {
      * @return
      */
     public Relation addRelationship(Relation rel) {
-        Entity source = entityService.getEntityById(rel.getSource());
-        Entity target = entityService.getEntityById(rel.getTarget());
+        Entity source = entityRepository.findEntityById(rel.getSource());
+        Entity target = entityRepository.findEntityById(rel.getTarget());
         if(source == null || target == null) return null;
         Relation saved = relationRepository.save(rel);
         source.getRelatesTo().put(rel.getId(), target.getId());
@@ -69,8 +72,8 @@ public class RelationServiceImpl implements RelationService {
      * @param to 被删除的节点关系to的id
      */
     public boolean deleteRelationById(String from, String to, String name) {
-        Entity source = entityService.getEntityById(from);
-        Entity target = entityService.getEntityById(to);
+        Entity source = entityRepository.findEntityById(from);
+        Entity target = entityRepository.findEntityById(to);
         if(source == null || target == null) return false;
         //删除关系时，相应的删除节点的relatesTo中的键值对
         //todo: 是否要为source, target, relation建立联合索引？
@@ -94,8 +97,8 @@ public class RelationServiceImpl implements RelationService {
         if(!optionalRel.isPresent())
             return false;
         Relation rel = optionalRel.get();
-        Entity source = entityService.getEntityById(rel.getSource());
-        Entity target = entityService.getEntityById(rel.getTarget());
+        Entity source = entityRepository.findEntityById(rel.getSource());
+        Entity target = entityRepository.findEntityById(rel.getTarget());
         source.getRelatesTo().remove(rel.getId());
         target.getRelatesTo().remove(rel.getId());
         entityService.updateEntityById(source.getId(), source, false);

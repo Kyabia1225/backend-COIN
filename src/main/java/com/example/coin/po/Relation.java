@@ -1,25 +1,18 @@
 package com.example.coin.po;
 
-import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.io.Serializable;
 
 @Document(collection = "relationships")
-public class Relation implements Serializable {
+public class Relation {
     @Id
     private String id;
-    @NonNull
     private String source;
-    @NonNull
     private String target;
-    @NonNull
-    @org.springframework.data.redis.core.index.Indexed
-    @org.springframework.data.mongodb.core.index.Indexed
     private String relation;
 
-    public Relation(@NonNull String source, @NonNull String target, @NonNull String relation) {
+    public Relation(String source, String target,  String relation) {
         this.source = source;
         this.target = target;
         this.relation = relation;
@@ -32,15 +25,15 @@ public class Relation implements Serializable {
         return this.id;
     }
 
-    public @NonNull String getSource() {
+    public String getSource() {
         return this.source;
     }
 
-    public @NonNull String getTarget() {
+    public String getTarget() {
         return this.target;
     }
 
-    public @NonNull String getRelation() {
+    public String getRelation() {
         return this.relation;
     }
 
@@ -48,15 +41,15 @@ public class Relation implements Serializable {
         this.id = id;
     }
 
-    public void setSource(@NonNull String source) {
+    public void setSource(String source) {
         this.source = source;
     }
 
-    public void setTarget(@NonNull String target) {
+    public void setTarget(String target) {
         this.target = target;
     }
 
-    public void setRelation(@NonNull String relation) {
+    public void setRelation(String relation) {
         this.relation = relation;
     }
 }

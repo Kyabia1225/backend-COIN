@@ -1,11 +1,12 @@
 package com.example.coin.service.impl;
 
-import com.example.coin.DAO.EntityRepository;
-import com.example.coin.po.Entity;
+import com.example.coin.DAO.*;
+import com.example.coin.po.*;
 import com.example.coin.service.EntityService;
 import com.example.coin.service.RelationService;
 import com.example.coin.util.ResponseVO;
 import com.example.coin.util.StringDistance;
+import com.example.coin.vo.EntityVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,16 @@ public class EntityServiceImpl implements EntityService {
     private EntityRepository entityRepository;
     @Autowired
     private RelationService relationService;
+    @Autowired
+    private AnimeRepository animeRepository;
+    @Autowired
+    private AnimeCharacterRepository animeCharacterRepository;
+    @Autowired
+    private AnimeCVRepository animeCVRepository;
+    @Autowired
+    private AnimeCompanyRepository animeCompanyRepository;
+    @Autowired
+    private AnimeDirectorRepository animeDirectorRepository;
 
     /**
      * 将关系节点持久化到数据库中
@@ -35,14 +46,14 @@ public class EntityServiceImpl implements EntityService {
      */
     @Override
     public boolean deleteEntityById(String id) {
-        Entity entity = getEntityById(id);
+        Entity entity = entityRepository.findEntityById(id);
         if(entity == null) return false;
         //删除与节点相关的所有关系、与该节点有关的节点中relatesTo的记录
         Set<String> associatedRelationships = getAssociatedRelations(entity.getId());
         for(String relId : associatedRelationships){
             //根据这个关系节点找到对应关系后，删除对方实体节点中关于本实体节点的信息
             String correspondingEntityId = entity.getRelatesTo().get(relId);
-            Entity correspondingEntity = getEntityById(correspondingEntityId);
+            Entity correspondingEntity = entityRepository.findEntityById(correspondingEntityId);
             correspondingEntity.getRelatesTo().remove(relId);
             updateEntityById(correspondingEntityId, correspondingEntity, false);
             //然后删除这个关系
@@ -58,10 +69,103 @@ public class EntityServiceImpl implements EntityService {
      * @return
      */
     @Override
-    public Entity getEntityById(String id) {
+    public EntityVO getEntityById(String id) {
         if(id == null) return null;
-        Optional<Entity>optionalEntity =  entityRepository.findById(id);
-        return optionalEntity.orElse(null);
+        Entity entity = entityRepository.findEntityById(id);
+        if(entity == null) return null;
+        if(entity.getType().equals("Anime")){
+            Anime anime = animeRepository.findAnimeByAnimeId(entity.getBgmId());
+            EntityVO entityVO = new EntityVO(entity);
+            Map<String, String> entityVOProperties = new HashMap<>();
+            entityVOProperties.put("animeId", anime.getAnimeId());
+            entityVOProperties.put("japaneseName", anime.getJapaneseName());
+            entityVOProperties.put("title", anime.getTitle());
+            entityVOProperties.put("length", anime.getLength());
+            entityVOProperties.put("company",anime.getCompany());
+            entityVOProperties.put("director", anime.getDirector());
+            entityVOProperties.put("description",anime.getDescription());
+            entityVOProperties.put("startDate", anime.getStartDate());
+            entityVOProperties.put("ranking", String.valueOf(anime.getRanking()));
+            entityVOProperties.put("score", String.valueOf(anime.getScore()));
+            entityVO.setProperties(entityVOProperties);
+            entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
+            return entityVO;
+        }else if(entity.getType().equals("AnimeCharacter")){
+            AnimeCharacter animeCharacter = animeCharacterRepository.findAnimeCharacterByCharacterId(entity.getBgmId());
+            EntityVO entityVO = new EntityVO(entity);
+            Map<String, String> entityVOProperties = new HashMap<>();
+            entityVOProperties.put("characterId", animeCharacter.getCharacterId());
+            entityVOProperties.put("name", animeCharacter.getName());
+            entityVOProperties.put("description", animeCharacter.getDescription());
+            entityVOProperties.put("birthday", animeCharacter.getBirthday());
+            entityVOProperties.put("gender", animeCharacter.getGender());
+            StringBuilder stringBuilder = new StringBuilder();
+            for(String name:animeCharacter.getOtherNames()){
+                stringBuilder.append(name).append(" ");
+            }
+            entityVOProperties.put("otherNames", stringBuilder.toString());
+            entityVO.setProperties(entityVOProperties);
+            entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
+            return entityVO;
+        }else if(entity.getType().equals("AnimeCV")){
+            AnimeCV animeCV = animeCVRepository.findAnimeCVByCvId(entity.getBgmId());
+            EntityVO entityVO = new EntityVO(entity);
+            Map<String, String> entityVOProperties = new HashMap<>();
+            entityVOProperties.put("CvId", animeCV.getCvId());
+            entityVOProperties.put("birthday", animeCV.getBirthday());
+            entityVOProperties.put("gender", animeCV.getGender());
+            entityVOProperties.put("name", animeCV.getName());
+            entityVOProperties.put("description", animeCV.getDescription());
+            entityVOProperties.put("profession", animeCV.getProfession());
+            StringBuilder stringBuilder = new StringBuilder();
+            for(String name:animeCV.getOtherNames()){
+                stringBuilder.append(name).append(" ");
+            }
+            entityVOProperties.put("otherNames", stringBuilder.toString());
+            entityVO.setProperties(entityVOProperties);
+            entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
+            return entityVO;
+        }else if(entity.getType().equals("AnimeCompany")){
+            AnimeCompany animeCompany = animeCompanyRepository.findAnimeCompanyByCompanyId(entity.getBgmId());
+            EntityVO entityVO = new EntityVO(entity);
+            Map<String, String> entityVOProperties = new HashMap<>();
+            entityVOProperties.put("CompanyId", animeCompany.getCompanyId());
+            entityVOProperties.put("birthday", animeCompany.getBirthday());
+            entityVOProperties.put("name", animeCompany.getName());
+            entityVOProperties.put("description", animeCompany.getDescription());
+            entityVOProperties.put("profession", animeCompany.getProfession());
+            StringBuilder stringBuilder = new StringBuilder();
+            for(String name:animeCompany.getOtherNames()){
+                stringBuilder.append(name).append(" ");
+            }
+            entityVOProperties.put("otherNames", stringBuilder.toString());
+            entityVO.setProperties(entityVOProperties);
+            entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
+            return entityVO;
+        }else if(entity.getType().equals("AnimeDirector")){
+            AnimeDirector animeDirector = animeDirectorRepository.findAnimeDirectorByDirectorId(entity.getBgmId());
+            EntityVO entityVO = new EntityVO(entity);
+            Map<String, String> entityVOProperties = new HashMap<>();
+            entityVOProperties.put("directorId", animeDirector.getDirectorId());
+            entityVOProperties.put("birthday", animeDirector.getBirthday());
+            entityVOProperties.put("gender", animeDirector.getGender());
+            entityVOProperties.put("name", animeDirector.getName());
+            entityVOProperties.put("description", animeDirector.getDescription());
+            entityVOProperties.put("profession", animeDirector.getProfession());
+            StringBuilder stringBuilder = new StringBuilder();
+            for(String name:animeDirector.getOtherNames()){
+                stringBuilder.append(name).append(" ");
+            }
+            entityVOProperties.put("otherNames", stringBuilder.toString());
+            entityVO.setProperties(entityVOProperties);
+            entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
+            return entityVO;
+        }else{
+            EntityVO entityVO = new EntityVO(entity);
+            entityVO.setProperties(entity.getProperties());
+            entityVO.setRelatesTo(entity.getRelatesTo());
+            return entityVO;
+        }
     }
 
     /**
@@ -73,7 +177,7 @@ public class EntityServiceImpl implements EntityService {
      */
     @Override
     public boolean updateEntityById(String id, Entity e, boolean updateAll) {
-        Entity origin = getEntityById(id);
+        Entity origin = entityRepository.findEntityById(id);
         if(origin == null) return false;
         if(updateAll) { //出于效率考虑，大多数更新只更新relatesTo，忽略以下变量
             origin.setName(e.getName());

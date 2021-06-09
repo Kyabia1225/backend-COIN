@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.FileNotFoundException;
 import java.io.Reader;
 @SpringBootTest
+@Ignore
 @RunWith(SpringRunner.class)
 public class JsonUtilTest {
     @Autowired

@@ -3,15 +3,13 @@ package com.example.coin.po;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 @Document(collection = "entities")
-public class Entity implements Serializable {
+public class Entity{
     @Id
     private String id;
-    @org.springframework.data.redis.core.index.Indexed
-    @org.springframework.data.mongodb.core.index.Indexed
     private String name;
     //位置信息
     private Double fx;
@@ -23,9 +21,9 @@ public class Entity implements Serializable {
 
     private String type;
     //节点属性（键值对形式）
-    private HashMap<String, String> properties;
+    private Map<String, String> properties;
     //记录与该节点相关的节点与关系: 前者是relationship的id，后者是Entity的id
-    private HashMap<String, String>relatesTo;
+    private Map<String, String>relatesTo;
 
     String bgmId;   //bangumi上的id
 
@@ -82,11 +80,11 @@ public class Entity implements Serializable {
         return this.type;
     }
 
-    public HashMap<String, String> getProperties() {
+    public Map<String, String> getProperties() {
         return this.properties;
     }
 
-    public HashMap<String, String> getRelatesTo() {
+    public Map<String, String> getRelatesTo() {
         return this.relatesTo;
     }
 
@@ -126,11 +124,11 @@ public class Entity implements Serializable {
         this.type = type;
     }
 
-    public void setProperties(HashMap<String, String> properties) {
+    public void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
 
-    public void setRelatesTo(HashMap<String, String> relatesTo) {
+    public void setRelatesTo(Map<String, String> relatesTo) {
         this.relatesTo = relatesTo;
     }
 

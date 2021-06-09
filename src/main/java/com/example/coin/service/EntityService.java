@@ -2,6 +2,7 @@ package com.example.coin.service;
 
 import com.example.coin.po.*;
 import com.example.coin.util.ResponseVO;
+import com.example.coin.vo.EntityVO;
 
 import java.util.List;
 import java.util.Set;
@@ -12,7 +13,7 @@ public interface EntityService {
     //删除实体
     boolean deleteEntityById(String id);
     //查询实体
-    Entity getEntityById(String id);
+    EntityVO getEntityById(String id);
     //更新实体
     boolean updateEntityById(String id, Entity e, boolean updateAll);
     //获取所有实体

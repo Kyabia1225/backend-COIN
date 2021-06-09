@@ -1,7 +1,8 @@
 package com.example.coin.service;
 
-import com.example.coin.DAO.EntityRepository;
-import com.example.coin.DAO.RelationRepository;
+import com.example.coin.DAO.*;
+import com.example.coin.po.AnimeCV;
+import com.example.coin.po.AnimeCharacter;
 import com.example.coin.po.Entity;
 import com.example.coin.po.Relation;
 import org.junit.Assert;
@@ -15,12 +16,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Ignore
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
 public class serviceTest {
     @Autowired
     private EntityService entityService;
@@ -30,6 +33,16 @@ public class serviceTest {
     private EntityRepository entityRepository;
     @Autowired
     private RelationRepository relationRepository;
+    @Autowired
+    private AnimeRepository animeRepository;
+    @Autowired
+    private AnimeCharacterRepository animeCharacterRepository;
+    @Autowired
+    private AnimeDirectorRepository animeDirectorRepository;
+    @Autowired
+    private AnimeCVRepository animeCVRepository;
+    @Autowired
+    private AnimeCompanyRepository animeCompanyRepository;
 
     @Test
     public void test01(){
@@ -112,5 +125,25 @@ public class serviceTest {
     public void test09(){
         entityService.deleteAllEntities();
         relationService.deleteAllRelationships();
+    }
+    @Test
+    public void test10(){
+        AnimeCharacter miyuki = animeCharacterRepository.findAnimeCharacterByNameContaining("佐助").get(0);
+        if(miyuki!=null) {
+            Entity miyukiEntity = entityRepository.findEntityByBgmIdAndType(miyuki.getCharacterId(), "AnimeCharacter");
+            Map<String, String> relatesTo = miyukiEntity.getRelatesTo();
+            for (String relationId : relatesTo.keySet()) {
+                Relation relationById = relationRepository.findRelationById(relationId);
+                Entity entityById = entityRepository.findEntityById(relatesTo.get(relationId));
+                System.out.println(entityById.getName() + relationById.getRelation() + miyukiEntity.getName());
+            }
+        }
+    }
+
+    @Test
+    public void test11(){
+        AnimeCharacter mikuru = animeCharacterRepository.findAnimeCharacterByNameContaining("堇").get(0);
+        System.out.println(mikuru.getDescription());
+        System.out.println(mikuru.getBirthday());
     }
 }

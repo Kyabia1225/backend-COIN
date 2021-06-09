@@ -3,6 +3,7 @@ package com.example.coin.controller;
 import com.example.coin.po.Entity;
 import com.example.coin.service.EntityService;
 import com.example.coin.util.ResponseVO;
+import com.example.coin.vo.EntityVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +37,7 @@ public class EntityController {
 
     @RequestMapping(path = "/getEntity", method = RequestMethod.GET)
     public ResponseVO getEntityById(@RequestParam(value = "id")String id){
-        Entity foundEntity = entityService.getEntityById(id);
+        EntityVO foundEntity = entityService.getEntityById(id);
         if(foundEntity == null) return ResponseVO.buildFailure(ID_NOT_EXIST);
         else return ResponseVO.buildSuccess(foundEntity);
     }
