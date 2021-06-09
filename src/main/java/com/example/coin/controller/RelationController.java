@@ -3,6 +3,7 @@ package com.example.coin.controller;
 import com.example.coin.po.Relation;
 import com.example.coin.service.RelationService;
 import com.example.coin.util.ResponseVO;
+import com.example.coin.vo.RelationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,13 +70,23 @@ public class RelationController {
         else return ResponseVO.buildSuccess();
     }
 
-    @GetMapping(path = "relationSearch")
+    @GetMapping(path = "/relationSearch")
     public  ResponseVO searchRelation(@RequestParam(value = "keyword")String keyword){
         Set<String> res = relationService.fuzzySearch(keyword);
         if(res.isEmpty()){
             return ResponseVO.buildFailure("未查找到相关关系");
         }else{
             return ResponseVO.buildSuccess(res);
+        }
+    }
+
+    @GetMapping(path = "/getAssociatedRelations")
+    public ResponseVO getAssociatedRelations(@RequestParam String id){//这里的id是EntityId
+        Set<RelationVO> associatedRelations = relationService.getAssociatedRelations(id);
+        if(associatedRelations == null){
+            return ResponseVO.buildFailure("id不存在");
+        }else {
+            return ResponseVO.buildSuccess();
         }
     }
 

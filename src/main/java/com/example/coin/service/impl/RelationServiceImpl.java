@@ -162,6 +162,7 @@ public class RelationServiceImpl implements RelationService {
     public Set<RelationVO> getAssociatedRelations(String id) {
         Set<RelationVO> relationVOSet = new HashSet<>();
         Entity entity = entityRepository.findEntityById(id);
+        if(entity == null) return null;
         List<String> entities = new ArrayList<>();
         entities.add(id);
         entities.addAll(entity.getRelatesTo().values());
