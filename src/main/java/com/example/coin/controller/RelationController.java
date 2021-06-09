@@ -86,7 +86,7 @@ public class RelationController {
         if(associatedRelations == null){
             return ResponseVO.buildFailure("id不存在");
         }else {
-            return ResponseVO.buildSuccess();
+            return ResponseVO.buildSuccess(associatedRelations);
         }
     }
 
