@@ -75,4 +75,13 @@ public class EntityController {
         }
     }
 
+    @GetMapping(path = "/getAssociatedEntities")
+    public ResponseVO getAssociatedEntities(@RequestParam String id){
+        List<EntityVO> associatedEntities = entityService.getAssociatedEntities(id);
+        if(associatedEntities == null){
+            return ResponseVO.buildFailure("id错误");
+        }else{
+            return ResponseVO.buildSuccess(associatedEntities);
+        }
+    }
 }

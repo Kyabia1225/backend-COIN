@@ -73,98 +73,105 @@ public class EntityServiceImpl implements EntityService {
         if(id == null) return null;
         Entity entity = entityRepository.findEntityById(id);
         if(entity == null) return null;
-        if(entity.getType().equals("Anime")){
-            Anime anime = animeRepository.findAnimeByAnimeId(entity.getBgmId());
-            EntityVO entityVO = new EntityVO(entity);
-            Map<String, String> entityVOProperties = new HashMap<>();
-            entityVOProperties.put("animeId", anime.getAnimeId());
-            entityVOProperties.put("japaneseName", anime.getJapaneseName());
-            entityVOProperties.put("title", anime.getTitle());
-            entityVOProperties.put("length", anime.getLength());
-            entityVOProperties.put("company",anime.getCompany());
-            entityVOProperties.put("director", anime.getDirector());
-            entityVOProperties.put("description",anime.getDescription());
-            entityVOProperties.put("startDate", anime.getStartDate());
-            entityVOProperties.put("ranking", String.valueOf(anime.getRanking()));
-            entityVOProperties.put("score", String.valueOf(anime.getScore()));
-            entityVO.setProperties(entityVOProperties);
-            entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
-            return entityVO;
-        }else if(entity.getType().equals("AnimeCharacter")){
-            AnimeCharacter animeCharacter = animeCharacterRepository.findAnimeCharacterByCharacterId(entity.getBgmId());
-            EntityVO entityVO = new EntityVO(entity);
-            Map<String, String> entityVOProperties = new HashMap<>();
-            entityVOProperties.put("characterId", animeCharacter.getCharacterId());
-            entityVOProperties.put("name", animeCharacter.getName());
-            entityVOProperties.put("description", animeCharacter.getDescription());
-            entityVOProperties.put("birthday", animeCharacter.getBirthday());
-            entityVOProperties.put("gender", animeCharacter.getGender());
-            StringBuilder stringBuilder = new StringBuilder();
-            for(String name:animeCharacter.getOtherNames()){
-                stringBuilder.append(name).append(" ");
+        switch (entity.getType()) {
+            case "Anime": {
+                Anime anime = animeRepository.findAnimeByAnimeId(entity.getBgmId());
+                EntityVO entityVO = new EntityVO(entity);
+                Map<String, String> entityVOProperties = new HashMap<>();
+                entityVOProperties.put("animeId", anime.getAnimeId());
+                entityVOProperties.put("japaneseName", anime.getJapaneseName());
+                entityVOProperties.put("title", anime.getTitle());
+                entityVOProperties.put("length", anime.getLength());
+                entityVOProperties.put("company", anime.getCompany());
+                entityVOProperties.put("director", anime.getDirector());
+                entityVOProperties.put("description", anime.getDescription());
+                entityVOProperties.put("startDate", anime.getStartDate());
+                entityVOProperties.put("ranking", String.valueOf(anime.getRanking()));
+                entityVOProperties.put("score", String.valueOf(anime.getScore()));
+                entityVO.setProperties(entityVOProperties);
+                entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
+                return entityVO;
             }
-            entityVOProperties.put("otherNames", stringBuilder.toString());
-            entityVO.setProperties(entityVOProperties);
-            entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
-            return entityVO;
-        }else if(entity.getType().equals("AnimeCV")){
-            AnimeCV animeCV = animeCVRepository.findAnimeCVByCvId(entity.getBgmId());
-            EntityVO entityVO = new EntityVO(entity);
-            Map<String, String> entityVOProperties = new HashMap<>();
-            entityVOProperties.put("CvId", animeCV.getCvId());
-            entityVOProperties.put("birthday", animeCV.getBirthday());
-            entityVOProperties.put("gender", animeCV.getGender());
-            entityVOProperties.put("name", animeCV.getName());
-            entityVOProperties.put("description", animeCV.getDescription());
-            entityVOProperties.put("profession", animeCV.getProfession());
-            StringBuilder stringBuilder = new StringBuilder();
-            for(String name:animeCV.getOtherNames()){
-                stringBuilder.append(name).append(" ");
+            case "AnimeCharacter": {
+                AnimeCharacter animeCharacter = animeCharacterRepository.findAnimeCharacterByCharacterId(entity.getBgmId());
+                EntityVO entityVO = new EntityVO(entity);
+                Map<String, String> entityVOProperties = new HashMap<>();
+                entityVOProperties.put("characterId", animeCharacter.getCharacterId());
+                entityVOProperties.put("name", animeCharacter.getName());
+                entityVOProperties.put("description", animeCharacter.getDescription());
+                entityVOProperties.put("birthday", animeCharacter.getBirthday());
+                entityVOProperties.put("gender", animeCharacter.getGender());
+                StringBuilder stringBuilder = new StringBuilder();
+                for (String name : animeCharacter.getOtherNames()) {
+                    stringBuilder.append(name).append(" ");
+                }
+                entityVOProperties.put("otherNames", stringBuilder.toString());
+                entityVO.setProperties(entityVOProperties);
+                entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
+                return entityVO;
             }
-            entityVOProperties.put("otherNames", stringBuilder.toString());
-            entityVO.setProperties(entityVOProperties);
-            entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
-            return entityVO;
-        }else if(entity.getType().equals("AnimeCompany")){
-            AnimeCompany animeCompany = animeCompanyRepository.findAnimeCompanyByCompanyId(entity.getBgmId());
-            EntityVO entityVO = new EntityVO(entity);
-            Map<String, String> entityVOProperties = new HashMap<>();
-            entityVOProperties.put("CompanyId", animeCompany.getCompanyId());
-            entityVOProperties.put("birthday", animeCompany.getBirthday());
-            entityVOProperties.put("name", animeCompany.getName());
-            entityVOProperties.put("description", animeCompany.getDescription());
-            entityVOProperties.put("profession", animeCompany.getProfession());
-            StringBuilder stringBuilder = new StringBuilder();
-            for(String name:animeCompany.getOtherNames()){
-                stringBuilder.append(name).append(" ");
+            case "AnimeCV": {
+                AnimeCV animeCV = animeCVRepository.findAnimeCVByCvId(entity.getBgmId());
+                EntityVO entityVO = new EntityVO(entity);
+                Map<String, String> entityVOProperties = new HashMap<>();
+                entityVOProperties.put("CvId", animeCV.getCvId());
+                entityVOProperties.put("birthday", animeCV.getBirthday());
+                entityVOProperties.put("gender", animeCV.getGender());
+                entityVOProperties.put("name", animeCV.getName());
+                entityVOProperties.put("description", animeCV.getDescription());
+                entityVOProperties.put("profession", animeCV.getProfession());
+                StringBuilder stringBuilder = new StringBuilder();
+                for (String name : animeCV.getOtherNames()) {
+                    stringBuilder.append(name).append(" ");
+                }
+                entityVOProperties.put("otherNames", stringBuilder.toString());
+                entityVO.setProperties(entityVOProperties);
+                entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
+                return entityVO;
             }
-            entityVOProperties.put("otherNames", stringBuilder.toString());
-            entityVO.setProperties(entityVOProperties);
-            entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
-            return entityVO;
-        }else if(entity.getType().equals("AnimeDirector")){
-            AnimeDirector animeDirector = animeDirectorRepository.findAnimeDirectorByDirectorId(entity.getBgmId());
-            EntityVO entityVO = new EntityVO(entity);
-            Map<String, String> entityVOProperties = new HashMap<>();
-            entityVOProperties.put("directorId", animeDirector.getDirectorId());
-            entityVOProperties.put("birthday", animeDirector.getBirthday());
-            entityVOProperties.put("gender", animeDirector.getGender());
-            entityVOProperties.put("name", animeDirector.getName());
-            entityVOProperties.put("description", animeDirector.getDescription());
-            entityVOProperties.put("profession", animeDirector.getProfession());
-            StringBuilder stringBuilder = new StringBuilder();
-            for(String name:animeDirector.getOtherNames()){
-                stringBuilder.append(name).append(" ");
+            case "AnimeCompany": {
+                AnimeCompany animeCompany = animeCompanyRepository.findAnimeCompanyByCompanyId(entity.getBgmId());
+                EntityVO entityVO = new EntityVO(entity);
+                Map<String, String> entityVOProperties = new HashMap<>();
+                entityVOProperties.put("CompanyId", animeCompany.getCompanyId());
+                entityVOProperties.put("birthday", animeCompany.getBirthday());
+                entityVOProperties.put("name", animeCompany.getName());
+                entityVOProperties.put("description", animeCompany.getDescription());
+                entityVOProperties.put("profession", animeCompany.getProfession());
+                StringBuilder stringBuilder = new StringBuilder();
+                for (String name : animeCompany.getOtherNames()) {
+                    stringBuilder.append(name).append(" ");
+                }
+                entityVOProperties.put("otherNames", stringBuilder.toString());
+                entityVO.setProperties(entityVOProperties);
+                entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
+                return entityVO;
             }
-            entityVOProperties.put("otherNames", stringBuilder.toString());
-            entityVO.setProperties(entityVOProperties);
-            entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
-            return entityVO;
-        }else{
-            EntityVO entityVO = new EntityVO(entity);
-            entityVO.setProperties(entity.getProperties());
-            entityVO.setRelatesTo(entity.getRelatesTo());
-            return entityVO;
+            case "AnimeDirector": {
+                AnimeDirector animeDirector = animeDirectorRepository.findAnimeDirectorByDirectorId(entity.getBgmId());
+                EntityVO entityVO = new EntityVO(entity);
+                Map<String, String> entityVOProperties = new HashMap<>();
+                entityVOProperties.put("directorId", animeDirector.getDirectorId());
+                entityVOProperties.put("birthday", animeDirector.getBirthday());
+                entityVOProperties.put("gender", animeDirector.getGender());
+                entityVOProperties.put("name", animeDirector.getName());
+                entityVOProperties.put("description", animeDirector.getDescription());
+                entityVOProperties.put("profession", animeDirector.getProfession());
+                StringBuilder stringBuilder = new StringBuilder();
+                for (String name : animeDirector.getOtherNames()) {
+                    stringBuilder.append(name).append(" ");
+                }
+                entityVOProperties.put("otherNames", stringBuilder.toString());
+                entityVO.setProperties(entityVOProperties);
+                entityVO.setRelatesTo(new HashMap<>(entity.getRelatesTo()));
+                return entityVO;
+            }
+            default: {
+                EntityVO entityVO = new EntityVO(entity);
+                entityVO.setProperties(entity.getProperties());
+                entityVO.setRelatesTo(entity.getRelatesTo());
+                return entityVO;
+            }
         }
     }
 
@@ -218,10 +225,15 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public Set<String> getAssociatedEntities(String id) {
+    public List<EntityVO> getAssociatedEntities(String id) {
+        List<EntityVO> entityVOList = new LinkedList<>();
         Entity entity = entityRepository.findEntityById(id);
         if(entity == null) return null;
-        return new HashSet<>(entity.getRelatesTo().values());
+        for(String entityId:entity.getRelatesTo().values()){
+            EntityVO entityVO = getEntityById(entityId);
+            entityVOList.add(entityVO);
+        }
+        return entityVOList;
     }
 
     @Override

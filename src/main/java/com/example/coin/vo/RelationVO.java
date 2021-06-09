@@ -1,5 +1,7 @@
 package com.example.coin.vo;
 
+import com.example.coin.po.Relation;
+
 public class RelationVO {
     private String id;
     private String source;
@@ -9,6 +11,12 @@ public class RelationVO {
     public RelationVO() {
     }
 
+    public RelationVO(Relation relation){
+        this.id = relation.getId();
+        this.source = relation.getSource();
+        this.target = relation.getTarget();
+        this.relation = relation.getRelation();
+    }
     public String getId() {
         return id;
     }

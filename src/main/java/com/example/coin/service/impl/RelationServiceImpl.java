@@ -7,6 +7,7 @@ import com.example.coin.po.Relation;
 import com.example.coin.service.EntityService;
 import com.example.coin.service.RelationService;
 import com.example.coin.util.StringDistance;
+import com.example.coin.vo.RelationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -155,6 +156,22 @@ public class RelationServiceImpl implements RelationService {
             e.getRelatesTo().clear();
             entityService.updateEntityById(e.getId(), e, false);
         }
+    }
+
+    @Override
+    public Set<RelationVO> getAssociatedRelations(String id) {
+        Set<RelationVO> relationVOSet = new HashSet<>();
+        Entity entity = entityRepository.findEntityById(id);
+        List<String> entities = new ArrayList<>();
+        entities.add(id);
+        entities.addAll(entity.getRelatesTo().values());
+        for(String relation:entity.getRelatesTo().keySet()){
+            Relation rel = relationRepository.findRelationById(relation);
+            if(entities.contains(rel.getSource())&&entities.contains(rel.getTarget())){
+                relationVOSet.add(new RelationVO(rel));
+            }
+        }
+        return relationVOSet;
     }
 
     @Override
