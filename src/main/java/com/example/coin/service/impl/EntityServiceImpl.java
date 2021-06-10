@@ -233,6 +233,7 @@ public class EntityServiceImpl implements EntityService {
             EntityVO entityVO = getEntityById(entityId);
             entityVOList.add(entityVO);
         }
+        entityVOList.add(getEntityById(id));
         return entityVOList;
     }
 

@@ -21,7 +21,6 @@ import java.util.Set;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@Ignore
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 
 public class serviceTest {
@@ -142,7 +141,8 @@ public class serviceTest {
 
     @Test
     public void test11(){
-        AnimeCharacter mikuru = animeCharacterRepository.findAnimeCharacterByNameContaining("堇").get(0);
+        AnimeCharacter mikuru = animeCharacterRepository.findAnimeCharactersByOtherNamesContaining("小夫").get(0);
+        System.out.println(mikuru.getName());
         System.out.println(mikuru.getDescription());
         System.out.println(mikuru.getBirthday());
     }

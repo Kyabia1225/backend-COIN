@@ -9,4 +9,5 @@ public interface AnimeCharacterRepository extends MongoRepository<AnimeCharacter
     public AnimeCharacter findAnimeCharacterByNameLike(String name);
     public List<AnimeCharacter> findAnimeCharacterByNameContaining(String name);
     public AnimeCharacter findAnimeCharacterByCharacterId(String characterId);
+    public List<AnimeCharacter> findAnimeCharactersByOtherNamesContaining(String name);
 }

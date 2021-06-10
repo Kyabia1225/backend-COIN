@@ -166,10 +166,16 @@ public class RelationServiceImpl implements RelationService {
         List<String> entities = new ArrayList<>();
         entities.add(id);
         entities.addAll(entity.getRelatesTo().values());
-        for(String relation:entity.getRelatesTo().keySet()){
-            Relation rel = relationRepository.findRelationById(relation);
-            if(entities.contains(rel.getSource())&&entities.contains(rel.getTarget())){
-                relationVOSet.add(new RelationVO(rel));
+        for(String entityId:entities){
+            Entity e = entityRepository.findEntityById(entityId);
+            if(e == null) continue;
+            for (Map.Entry<String, String> entry : e.getRelatesTo().entrySet()) {
+                String relation = entry.getKey();
+                if (entities.contains(entry.getValue())) {
+                    Relation rel = relationRepository.findRelationById(relation);
+                    if(rel == null) continue;
+                    relationVOSet.add(new RelationVO(rel));
+                }
             }
         }
         return relationVOSet;
