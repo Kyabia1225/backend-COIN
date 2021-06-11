@@ -228,9 +228,8 @@ public class EntityServiceImpl implements EntityService {
     public List<EntityVO> getAssociatedEntities(String id) {
         Entity entity = entityRepository.findEntityById(id);
         if(entity == null) return null;
-        Set<String> entityIds = new HashSet<>(entity.getRelatesTo().size()+1);
         List<EntityVO> entityVOList = new LinkedList<>();
-        entityIds.addAll(entity.getRelatesTo().values());
+        Set<String> entityIds = new HashSet<>(entity.getRelatesTo().values());
         for(String entityId:entityIds){
             entityVOList.add(getEntityById(entityId));
         }
