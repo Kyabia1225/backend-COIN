@@ -230,6 +230,7 @@ public class EntityServiceImpl implements EntityService {
         if(entity == null) return null;
         List<EntityVO> entityVOList = new LinkedList<>();
         Set<String> entityIds = new HashSet<>(entity.getRelatesTo().values());
+        entityIds.add(id);
         for(String entityId:entityIds){
             entityVOList.add(getEntityById(entityId));
         }
