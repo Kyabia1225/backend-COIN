@@ -77,7 +77,7 @@ public class EntityController {
 
     @GetMapping(path = "/getAssociatedEntities")
     public ResponseVO getAssociatedEntities(@RequestParam String id){
-        Set<EntityVO> associatedEntities = entityService.getAssociatedEntities(id);
+        List<EntityVO> associatedEntities = entityService.getAssociatedEntities(id);
         if(associatedEntities == null){
             return ResponseVO.buildFailure("id错误");
         }else{

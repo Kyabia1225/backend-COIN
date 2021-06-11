@@ -23,7 +23,7 @@ public interface EntityService {
     //获取实体的所有关系id
     Set<String> getAssociatedRelations(String id);
     //获取实体所有相关的一级实体id
-    Set<EntityVO> getAssociatedEntities(String id);
+    List<EntityVO> getAssociatedEntities(String id);
     //更新所有entity的位置信息
     ResponseVO updateLocations(List<Entity>entities);
 
