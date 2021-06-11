@@ -17,27 +17,27 @@ public class JsonUtilTest {
     JsonUtil jsonUtil;
     @Test
     public void test01() throws FileNotFoundException {
-        Reader reader = jsonUtil.readJsonFile("D:\\anime_out");
+        Reader reader = jsonUtil.readJsonFile("/root/out/anime_out");
         jsonUtil.analyseAnimeJson(reader);
     }
     @Test
     public void test02() throws FileNotFoundException {
-        Reader reader = jsonUtil.readJsonFile("D:\\character_out");
+        Reader reader = jsonUtil.readJsonFile("/root/out/character_out");
         jsonUtil.analyseAnimeCharacterJson(reader);
     }
     @Test
     public void test03() throws FileNotFoundException {
-        Reader reader = jsonUtil.readJsonFile("D:\\company_out");
+        Reader reader = jsonUtil.readJsonFile("/root/out/company_out");
         jsonUtil.analyseAnimeCompanyJson(reader);
     }
     @Test
     public void test04() throws FileNotFoundException {
-        Reader reader = jsonUtil.readJsonFile("D:\\cv_out");
+        Reader reader = jsonUtil.readJsonFile("/root/out/cv_out");
        jsonUtil.analyseAnimeCVJson(reader);
     }
     @Test
     public void test05() throws FileNotFoundException {
-        Reader reader = jsonUtil.readJsonFile("D:\\director_out");
+        Reader reader = jsonUtil.readJsonFile("/root/out/director_out");
         jsonUtil.analyseAnimeDirector(reader);
     }
 }

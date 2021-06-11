@@ -24,6 +24,7 @@ import java.util.Set;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Ignore
 public class serviceTest {
     @Autowired
     private EntityService entityService;
