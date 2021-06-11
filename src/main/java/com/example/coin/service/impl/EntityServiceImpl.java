@@ -225,8 +225,8 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
-    public List<EntityVO> getAssociatedEntities(String id) {
-        List<EntityVO> entityVOList = new LinkedList<>();
+    public Set<EntityVO> getAssociatedEntities(String id) {
+        Set<EntityVO> entityVOList = new HashSet<>();
         Entity entity = entityRepository.findEntityById(id);
         if(entity == null) return null;
         for(String entityId:entity.getRelatesTo().values()){
