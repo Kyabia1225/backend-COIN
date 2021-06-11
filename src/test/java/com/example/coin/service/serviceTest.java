@@ -5,6 +5,7 @@ import com.example.coin.po.AnimeCV;
 import com.example.coin.po.AnimeCharacter;
 import com.example.coin.po.Entity;
 import com.example.coin.po.Relation;
+import com.example.coin.vo.EntityVO;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -16,13 +17,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
 public class serviceTest {
     @Autowired
     private EntityService entityService;
@@ -141,9 +142,7 @@ public class serviceTest {
 
     @Test
     public void test11(){
-        AnimeCharacter mikuru = animeCharacterRepository.findAnimeCharactersByOtherNamesContaining("小夫").get(0);
-        System.out.println(mikuru.getName());
-        System.out.println(mikuru.getDescription());
-        System.out.println(mikuru.getBirthday());
+        List<EntityVO> associatedEntities = entityService.getAssociatedEntities("60bce771b138d704caa70619");
+        System.out.println(associatedEntities);
     }
 }
