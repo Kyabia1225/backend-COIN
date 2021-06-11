@@ -80,7 +80,7 @@ public class JsonUtil {
                 Entity cvEntity = entityRepository.findEntityByBgmIdAndType(cvId, "AnimeCV");
                 //建立角色和cv的关系
                 if(characterEntity!=null&&cvEntity!=null) {
-                    relationService.addRelationship(characterEntity.getId(), cvEntity.getId(), "配音");
+                    relationService.addRelationship(cvEntity.getId(), characterEntity.getId(), "配音");
                     characterList.add(characterId);
                     cvEntityList.add(cvEntity.getId());
                     characterEntityList.add(characterEntity.getId());
