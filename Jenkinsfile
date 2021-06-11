@@ -14,7 +14,7 @@ pipeline {
                     steps{
                         echo 'COIN Deploy'
                         sh "if(ps -aux | grep target/coin.jar | grep -v grep)then(ps -aux | grep target/coin.jar | grep -v grep | awk {'print \$2'} | xargs kill -9)fi"
-                        sh 'nohup java -jar target/coin.jar > Log.log 2>&1 &'
+                        sh 'nohup java -jar target/coin.jar &'
                     }
          }
     }
