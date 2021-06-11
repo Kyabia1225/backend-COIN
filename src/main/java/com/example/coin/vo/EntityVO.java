@@ -3,6 +3,7 @@ package com.example.coin.vo;
 import com.example.coin.po.Entity;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class EntityVO {
     private String id;
@@ -122,5 +123,18 @@ public class EntityVO {
 
     public void setRelatesTo(Map<String, String> relatesTo) {
         this.relatesTo = relatesTo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EntityVO entityVO = (EntityVO) o;
+        return Objects.equals(id, entityVO.id) && Objects.equals(name, entityVO.name) && Objects.equals(fx, entityVO.fx) && Objects.equals(fy, entityVO.fy) && Objects.equals(x, entityVO.x) && Objects.equals(y, entityVO.y) && Objects.equals(vx, entityVO.vx) && Objects.equals(vy, entityVO.vy) && Objects.equals(type, entityVO.type) && Objects.equals(properties, entityVO.properties) && Objects.equals(relatesTo, entityVO.relatesTo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, fx, fy, x, y, vx, vy, type, properties, relatesTo);
     }
 }
