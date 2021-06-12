@@ -12,6 +12,7 @@ import java.io.Reader;
 @SpringBootTest
 @Ignore
 @RunWith(SpringRunner.class)
+//通过词条测试把数据录入数据库 不要去除@Ignore
 public class JsonUtilTest {
     @Autowired
     JsonUtil jsonUtil;

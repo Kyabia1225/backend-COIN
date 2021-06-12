@@ -10,9 +10,7 @@ import com.example.coin.service.RelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -232,15 +230,28 @@ public class JsonUtil {
     }
 
     public String dateAddress(String date){
-        Pattern pattern = Pattern.compile("\\d{4}年\\d{1,2}月\\d{1,2}日|\\d{4}-\\d{1,2}-\\d{1,2}");
-        Matcher matcher = pattern.matcher(date);
         String addressedDate;
-        if(matcher.find()){
-            addressedDate = matcher.group().replace("年", "-").replace("月", "-").replace("日", "");
-        }else{
-            addressedDate = null;
+        String tmp = date;
+        Pattern pattern1 = Pattern.compile("^\\d{4}年\\d{1,2}月\\d{1,2}日|^\\d{4}-\\d{1,2}-\\d{1,2}");
+        Matcher matcher1 = pattern1.matcher(tmp);
+        if(matcher1.find()){
+            addressedDate = matcher1.group().replace("年", "-").replace("月", "-").replace("日", "");
+        }else {
+            tmp = date;
+            Pattern pattern2 = Pattern.compile("^\\d{1,2}月\\d{1,2}日|^\\d{1,2}-\\d{1,2}");
+            Matcher matcher2 = pattern2.matcher(tmp);
+            if (matcher2.find()) {
+                addressedDate = matcher2.group().replace("月", "-").replace("日", "");
+            }else {
+                addressedDate = null;
+            }
         }
         return addressedDate;
     }
+//
+//    public void makeDictionary() throws FileNotFoundException {/*
+//        InputStream f = new FileInputStream("D:/anime_out");
+//        File file = new File("")*/
+//    }
 }
 

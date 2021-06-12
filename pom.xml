@@ -49,7 +49,7 @@
 			<artifactId>fastjson</artifactId>
 			<version>1.2.58</version>
 		</dependency>
-		<!--引入redis相关依赖-->
+		<!--
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
@@ -59,6 +59,7 @@
             <artifactId>spring-data-redis</artifactId>
             <version>2.3.2.RELEASE</version>
         </dependency>
+		-->
 		<!--引入mongoDB依赖-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -69,6 +70,14 @@
 			<artifactId>mongo-java-driver</artifactId>
 			<version>3.12.2</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.hankcs/hanlp -->
+		<dependency>
+			<groupId>com.hankcs</groupId>
+			<artifactId>hanlp</artifactId>
+			<version>portable-1.8.1</version>
+		</dependency>
+
 
 	</dependencies>
 
