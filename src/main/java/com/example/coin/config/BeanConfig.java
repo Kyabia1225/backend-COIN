@@ -10,7 +10,7 @@ public class BeanConfig {
     @Value("${rootDirPath}")
     private String rootDirPath;
 
-    @Bean
+    @Bean(name = "coreProcessor")
     public CoreProcessor modelProcess() throws Exception{
         return new CoreProcessor(rootDirPath);
     }
