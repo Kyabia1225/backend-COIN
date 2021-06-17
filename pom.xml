@@ -12,7 +12,7 @@
 	<artifactId>coin</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>coin</name>
-	<description>Demo project for Spring Boot</description>
+	<description>coinHub Project</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
@@ -49,18 +49,7 @@
 			<artifactId>fastjson</artifactId>
 			<version>1.2.58</version>
 		</dependency>
-		<!--
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
-		</dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-redis</artifactId>
-            <version>2.3.2.RELEASE</version>
-        </dependency>
-		-->
-		<!--引入mongoDB依赖-->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -71,12 +60,38 @@
 			<version>3.12.2</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.hankcs/hanlp -->
 		<dependency>
-			<groupId>com.hankcs</groupId>
-			<artifactId>hanlp</artifactId>
-			<version>portable-1.8.1</version>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-core_2.12</artifactId>
+			<version>2.4.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.spark/spark-mllib -->
+		<dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-mllib_2.12</artifactId>
+			<version>2.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.codehaus.janino</groupId>
+			<artifactId>janino</artifactId>
+			<version>3.0.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.thoughtworks.paranamer</groupId>
+			<artifactId>paranamer</artifactId>
+			<version>2.8</version>
+		</dependency>
+
+
 
 
 	</dependencies>

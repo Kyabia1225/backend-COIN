@@ -238,7 +238,7 @@ public class JsonUtil {
             addressedDate = matcher1.group().replace("年", "-").replace("月", "-").replace("日", "");
         }else {
             tmp = date;
-            Pattern pattern2 = Pattern.compile("^\\d{1,2}月\\d{1,2}日|^\\d{1,2}-\\d{1,2}");
+            Pattern pattern2 = Pattern.compile("^\\d{1,2}月\\d{1,2}日|\\d{1,2}-\\d{1,2}");
             Matcher matcher2 = pattern2.matcher(tmp);
             if (matcher2.find()) {
                 addressedDate = matcher2.group().replace("月", "-").replace("日", "");

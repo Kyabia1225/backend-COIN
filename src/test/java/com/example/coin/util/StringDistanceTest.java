@@ -21,7 +21,7 @@ public class StringDistanceTest {
 
     @Test
     public void test3(){
-        System.out.println(new JsonUtil().dateAddress("1998-12"));
+        System.out.println(new JsonUtil().dateAddress("？？？？-12-25"));
         System.out.println(new JsonUtil().dateAddress("1998年12月25日"));
         System.out.println(new JsonUtil().dateAddress("2月25日"));
     }
