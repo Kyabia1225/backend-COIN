@@ -1,0 +1,43 @@
+1:anime 评分
+2:anime 放送日期
+3:anime 别名
+4:anime 长度
+5:anime 导演
+6:anime 是什么
+7:anime 角色
+8:anime 声优
+9:cv 别名
+10:cv 性别
+11:cv 是谁
+12:cv 生日
+13:director 别名
+14:director 性别
+15:director 生日
+16:director 是谁
+17:character 别名
+18:character 性别
+19:character 是谁
+20:character 生日
+21:company 别名
+22:company 创办日期
+23:company 是什么
+24:cv 配音过的角色
+25:cv 配音过的动画
+26:cv 配音 character
+27:cv 配音 anime
+28:character 所在作品
+29:character 的声优是谁
+30:company 作品
+31:director 执导作品
+32:anime 的制作公司
+33:anime 的导演
+<<<<<<< HEAD
+34:评分 大于 m 动画
+35:评分 小于 m 动画
+36:m 年 放松 动画
+=======
+34:评分大于 m 动画
+35:评分小于 m 动画
+36:m 年 放送的动画
+>>>>>>> 580615997a5c9fb69dccc00fd7f95e86322f670f
+37:cv cv 合作作品
