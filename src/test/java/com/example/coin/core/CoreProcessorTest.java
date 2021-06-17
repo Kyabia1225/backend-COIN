@@ -111,7 +111,7 @@ public class CoreProcessorTest {
     @Test
     public void testB() throws Exception {
         CoreProcessor query = new CoreProcessor("src/main/resources/data");
-        String question = "水树奈奈几岁啦";
+        String question = "水树奈奈今年几岁捏";
         System.out.println(query.analysis(question));
     }
 }
