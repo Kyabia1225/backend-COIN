@@ -111,7 +111,7 @@ public class CoreProcessorTest {
     @Test
     public void testB() throws Exception {
         CoreProcessor query = new CoreProcessor("D:/Documents/Tencent Files/2506856189/FileRecv/训练集/");
-        String question = "火影忍者评分多少？";
+        String question = "水树奈奈年龄";
         System.out.println(query.analysis(question));
     }
 }
