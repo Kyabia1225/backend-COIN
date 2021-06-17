@@ -85,7 +85,7 @@ public class CoreProcessor {
      * @return Map<Double, String> == 序号，问题分类
      */
     public Map<Double,String> loadQuestionTemplates() {
-        Map<Double, String> questionsPattern = new HashMap<>(16);
+        Map<Double, String> questionsPattern = new HashMap<>(48);
         File file = new File(rootDirPath + "classification.txt");
         BufferedReader br = null;
         try {
@@ -133,7 +133,6 @@ public class CoreProcessor {
         } catch (NumberFormatException | IOException e) {
             e.printStackTrace();
         }
-        System.out.println(vocabulary.size());
         return vocabulary;
     }
 
