@@ -110,8 +110,8 @@ public class CoreProcessorTest {
 
     @Test
     public void testB() throws Exception {
-        CoreProcessor query = new CoreProcessor("D:/Documents/Tencent Files/2506856189/FileRecv/训练集/");
-        String question = "水树奈奈多大啦";
+        CoreProcessor query = new CoreProcessor("src/main/resources/data");
+        String question = "伊莉雅是谁";
         System.out.println(query.analysis(question));
     }
 }
