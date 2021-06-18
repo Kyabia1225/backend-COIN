@@ -269,6 +269,8 @@ public class CoreProcessor {
         List<Term> terms = segment.seg(querySentence);
         StringBuilder abstractQuery = new StringBuilder();
         abstractMap = new HashMap<>();
+        int m_count = 0;
+        int cv_count = 0;
         for(Term term:terms){
             if(term.nature.toString().equals("anime")){
                 abstractQuery.append("anime ");
@@ -276,19 +278,30 @@ public class CoreProcessor {
             }else if(term.nature.toString().equals("character")){
                 abstractQuery.append("character ");
                 abstractMap.put("character", term.word);
-            }else if(term.nature.toString().equals("cv")){
+            }else if(term.nature.toString().equals("cv")&&cv_count == 0) {
                 abstractQuery.append("cv ");
                 abstractMap.put("cv", term.word);
+                cv_count++;
+            }else if(term.nature.toString().equals("cv")&&cv_count == 1){
+                abstractQuery.append("sv ");
+                abstractMap.put("sv", term.word);
+                cv_count++;
             }else if(term.nature.toString().equals("company")){
                 abstractQuery.append("company ");
                 abstractMap.put("company", term.word);
             }else if(term.nature.toString().equals("director")){
                 abstractQuery.append("director ");
                 abstractMap.put("director", term.word);
-            }else if(term.nature.toString().equals("m")){
+            }else if(term.nature.toString().equals("m")&&m_count == 0){
                 abstractQuery.append("m ");
                 abstractMap.put("m", term.word);
-            }else{
+                m_count++;
+            }else if(term.nature.toString().equals("t")&&m_count == 1){//时间词
+                abstractQuery.append("n ");
+                abstractMap.put("n", term.word.substring(0, term.word.length()-1));
+                m_count++;
+            }
+            else{
                 abstractQuery.append(term.word).append(" ");
             }
         }

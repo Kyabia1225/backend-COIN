@@ -154,13 +154,13 @@ public class serviceTest {
     }
     @Test
     public void testQ_19() throws Exception {
-        String answer = questionService.answer("雪菜是谁");
+        String answer = questionService.answer("佐助是谁");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
     }
     @Test
     public void testQ_20() throws Exception {
-        String answer = questionService.answer("小木曾雪菜生日是什么时候");
+        String answer = questionService.answer("姬柊雪菜生日是什么时候");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
     }
@@ -239,6 +239,26 @@ public class serviceTest {
     @Test
     public void testQ_33() throws Exception {
         String answer = questionService.answer("评分小于5.0的动画有哪些");
+        System.out.println("_______________________________________________________________________");
+        System.out.println(answer);
+    }
+
+    @Test
+    public void testQ_34() throws Exception {
+        String answer = questionService.answer("2012年有哪些动画播放");
+        System.out.println("_______________________________________________________________________");
+        System.out.println(answer);
+    }
+
+    @Test
+    public void testQ_35() throws Exception {
+        String answer = questionService.answer("花泽香菜与水濑祈共同配音的动画有哪些");
+        System.out.println("_______________________________________________________________________");
+        System.out.println(answer);
+    }
+    @Test
+    public void testQ_36() throws Exception {
+        String answer = questionService.answer("2020年10月番");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
     }

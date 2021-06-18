@@ -12,5 +12,5 @@ public interface AnimeRepository extends MongoRepository<Anime, String> {
     List<Anime> findAnimeByJapaneseNameLike(String title);
     List<Anime> findAnimeByScoreGreaterThan(Double sc);
     List<Anime> findAnimeByScoreLessThan(Double sc);
-    List<Anime> findAnimeByStartDateStartsWith(String year);
+    List<Anime> findAnimeByStartDateStartsWith(String date);
 }

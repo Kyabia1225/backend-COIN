@@ -10,10 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -182,8 +180,11 @@ public class QuestionServiceImpl implements QuestionService {
                 break;
             case 35:
                 //cv cv 合作作品
-                answer=getCVandCVCooperateAnime(strings.get(1),strings.get(3));
+                answer=getCVandCVCooperateAnime(strings.get(1),strings.get(2));
                 break;
+            case 36:
+                //m 年 m 月 放送的动画
+                answer=getyyyyMMAnime(strings.get(1), strings.get(3));
 
         }
         return answer;
@@ -529,6 +530,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCharacter> c=animeCharacterRepository.findAnimeCharacterByName(character);
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(c);
+        charas = charas.stream().distinct().collect(Collectors.toList());
         if(charas.size() == 0){
             return UNFOUND;
         }
@@ -545,6 +547,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCharacter> c=animeCharacterRepository.findAnimeCharacterByName(character);
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(c);
+        charas = charas.stream().distinct().collect(Collectors.toList());
         if(charas.size() == 0){
             return UNFOUND;
         }
@@ -561,6 +564,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCompany> companies1=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
         StringBuilder res= new StringBuilder();
         companies.addAll(companies1);
+        companies = companies.stream().distinct().collect(Collectors.toList());
         if(companies.size() == 0){
             return UNFOUND;
         }
@@ -580,6 +584,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCompany> companies1=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
         StringBuilder res= new StringBuilder();
         companies.addAll(companies1);
+        companies = companies.stream().distinct().collect(Collectors.toList());
         if(companies.size() == 0){
             return UNFOUND;
         }
@@ -619,6 +624,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCV> cvs=animeCVRepository.findAnimeCVByNameLike(cvName);
         List<AnimeCV> cvs2=animeCVRepository.findAnimeCVByOtherNamesContaining(cvName);
         cvs.addAll(cvs2);
+        cvs = cvs.stream().distinct().collect(Collectors.toList());
         if(cvs.size() == 0){
             return UNFOUND;
         }
@@ -646,6 +652,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCV> cvs=animeCVRepository.findAnimeCVByNameLike(cvName);
         List<AnimeCV> cvs2=animeCVRepository.findAnimeCVByOtherNamesContaining(cvName);
         cvs.addAll(cvs2);
+        cvs = cvs.stream().distinct().collect(Collectors.toList());
         if(cvs.size() == 0){
             return UNFOUND;
         }
@@ -675,6 +682,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharacterByNameLike(character);
         List<AnimeCharacter> charas2=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(charas2);
+        charas = charas.stream().distinct().collect(Collectors.toList());
         if(charas.size() == 0){
             return UNFOUND;
         }
@@ -696,6 +704,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharacterByNameLike(character);
         List<AnimeCharacter> charas2=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(charas2);
+        charas = charas.stream().distinct().collect(Collectors.toList());
         if(charas.size() == 0){
             return UNFOUND;
         }
@@ -724,6 +733,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCompany> comps=animeCompanyRepository.findAnimeCompanyByNameLike(company);
         List<AnimeCompany> comps2=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
         comps.addAll(comps2);
+        comps = comps.stream().distinct().collect(Collectors.toList());
         if(comps.size() == 0){
             return UNFOUND;
         }
@@ -746,6 +756,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeDirector> dirs=animeDirectorRepository.findAnimeDirectorByNameLike(director);
         List<AnimeDirector> dirs2=animeDirectorRepository.findAnimeDirectorByOtherNamesContaining(director);
         dirs.addAll(dirs2);
+        dirs = dirs.stream().distinct().collect(Collectors.toList());
         if(dirs.size() == 0){
             return UNFOUND;
         }
@@ -768,6 +779,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<Anime> animes=animeRepository.findAnimeByTitleLike(anime);
         List<Anime> animes2=animeRepository.findAnimeByJapaneseNameLike(anime);
         animes.addAll(animes2);
+        animes = animes.stream().distinct().collect(Collectors.toList());
         if(animes.size() == 0){
             return UNFOUND;
         }
@@ -790,6 +802,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<Anime> animes=animeRepository.findAnimeByTitleLike(anime);
         List<Anime> animes2=animeRepository.findAnimeByJapaneseNameLike(anime);
         animes.addAll(animes2);
+        animes = animes.stream().distinct().collect(Collectors.toList());
         if(animes.size() == 0){
             return UNFOUND;
         }
@@ -834,11 +847,72 @@ public class QuestionServiceImpl implements QuestionService {
         return res.toString();
     }
     private String getYYYYAnime(String year){
-        return "";
+        List<Anime> animeList = animeRepository.findAnimeByStartDateStartsWith(year);
+        if(animeList == null){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("查询到以下动画播放于").append(year).append("年:\n");
+            for(Anime anime:animeList){
+                stringBuilder.append(anime.getTitle()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getCVandCVCooperateAnime(String cv1, String cv2){
-        return "";
+        List<AnimeCV> cv1List = animeCVRepository.findAnimeCVByNameLike(cv1);
+        List<AnimeCV> cv2List = animeCVRepository.findAnimeCVByNameLike(cv2);
+        StringBuilder stringBuilder = new StringBuilder();
+        if(cv1List == null||cv1List.size() == 0){
+            stringBuilder.append("查找不到声优").append(cv1);
+            return stringBuilder.toString();
+        }else if(cv2List == null || cv2List.size() == 0){
+            stringBuilder.append("查找不到声优").append(cv2);
+            return stringBuilder.toString();
+        }else{
+            AnimeCV CV1 = cv1List.get(0);
+            AnimeCV CV2 = cv2List.get(0);
+            Entity cv1Entity = entityRepository.findEntityByBgmIdAndType(CV1.getCvId(), "AnimeCV");
+            Entity cv2Entity = entityRepository.findEntityByBgmIdAndType(CV2.getCvId(), "AnimeCV");
+            Set<String> set1 = new HashSet<>();
+            for(String id:cv1Entity.getRelatesTo().values()){
+                Entity e = entityRepository.findEntityById(id);
+                if(e.getType().equals("Anime")){
+                    set1.add(e.getId());
+                }
+            }
+            Set<String> set2 = new HashSet<>(cv2Entity.getRelatesTo().values());
+            set1.retainAll(set2);
+            if(set1.size() == 0){
+                stringBuilder.append(CV1.getName()).append("没有与").append(CV2.getName()).append("合作的动画\n");
+                return stringBuilder.toString();
+            }
+            stringBuilder.append(CV1.getName()).append("与").append(CV2.getName()).append("共同合作的动画有: \n");
+            for(String id:set1){
+               stringBuilder.append(entityRepository.findEntityById(id).getName()).append(" ");
+            }
+            return stringBuilder.toString();
+        }
     }
+
+    private String getyyyyMMAnime(String year, String month){
+        month = month.replace("一","1").replace("二","2").replace("三","3")
+        .replace("四","4").replace("五","5").replace("六","6")
+        .replace("七","7").replace("八","8").replace("九","9")
+        .replace("十","10").replace("十一","11").replace("十二","12");
+        List<Anime> animeList = animeRepository.findAnimeByStartDateStartsWith(year+"-"+month);
+        if(animeList == null||animeList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("查询到以下动画播放于").append(year).append("年").append(month).append("月\n");
+            for(Anime anime:animeList){
+                stringBuilder.append(anime.getTitle()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
+    }
+
 
 }
 
