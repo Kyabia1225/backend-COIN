@@ -524,7 +524,20 @@ public class QuestionServiceImpl implements QuestionService {
         }
     }
     private String getCharacterGender(String character){
-        return "";
+        List<AnimeCharacter> characterList = animeCharacterRepository.findAnimeCharacterByNameContaining(character);
+        if(characterList == null) return UNFOUND;
+        if(characterList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(characterList.size()>1){
+                stringBuilder.append("查询到以下").append(characterList.size()).append("个动画角色结果: \n\n");
+            }
+            for(AnimeCharacter chara:characterList){
+                stringBuilder.append(chara.getName()).append("性别为").append(chara.getGender()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
 
     private String getCharacter(String character){
@@ -679,11 +692,50 @@ public class QuestionServiceImpl implements QuestionService {
         return res.toString();
     }
     private String getIfCVDubCharacter(String cv,String character){
-
-        return "";
+        StringBuilder stringBuilder = new StringBuilder();
+        List<AnimeCharacter> animeCharacterList = animeCharacterRepository.findAnimeCharacterByNameLike(character);
+        List<AnimeCV> animeCVList = animeCVRepository.findAnimeCVByNameLike(cv);
+        if(animeCVList.size() == 0){
+            stringBuilder.append("未找到这位cv:").append(cv).append("\n");
+            return stringBuilder.toString();
+        }else if(animeCharacterList.size() == 0){
+            stringBuilder.append("未找到这个角色:").append(character).append("\n");
+            return stringBuilder.toString();
+        }else{
+            AnimeCharacter foundCharacter = animeCharacterList.get(0);
+            AnimeCV foundCV = animeCVList.get(0);
+            Entity animeCVEntity = entityRepository.findEntityByBgmIdAndType(foundCV.getCvId(), "AnimeCV");
+            Entity animeCharacterEntity = entityRepository.findEntityByBgmIdAndType(foundCharacter.getCharacterId(), "AnimeCharacter");
+            if(animeCVEntity.getRelatesTo().containsValue(animeCharacterEntity.getId())){
+                stringBuilder.append(animeCVEntity.getName()).append("配音过").append(animeCharacterEntity.getName()).append("\n");
+            }else{
+                stringBuilder.append(animeCVEntity.getName()).append("没有配音过").append(animeCharacterEntity.getName()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getIfCVDubAnime(String cv,String anime){
-        return "";
+        StringBuilder stringBuilder = new StringBuilder();
+        List<Anime> animeList = animeRepository.findAnimeByTitleLike(anime);
+        List<AnimeCV> animeCVList = animeCVRepository.findAnimeCVByNameLike(cv);
+        if(animeCVList.size() == 0){
+            stringBuilder.append("未找到这位cv:").append(cv).append("\n");
+            return stringBuilder.toString();
+        }else if(animeList.size() == 0){
+            stringBuilder.append("未找到这部动画:").append(anime).append("\n");
+            return stringBuilder.toString();
+        }else{
+            Anime foundAnime = animeList.get(0);
+            AnimeCV foundCV = animeCVList.get(0);
+            Entity animeCVEntity = entityRepository.findEntityByBgmIdAndType(foundCV.getCvId(), "AnimeCV");
+            Entity animeEntity = entityRepository.findEntityByBgmIdAndType(foundAnime.getAnimeId(), "Anime");
+            if(animeCVEntity.getRelatesTo().containsValue(animeEntity.getId())){
+                stringBuilder.append(animeCVEntity.getName()).append("配音过").append(animeEntity.getName()).append("\n");
+            }else{
+                stringBuilder.append(animeCVEntity.getName()).append("没有配音过").append(animeEntity.getName()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getCharacterAnimes(String character){
         StringBuilder res= new StringBuilder();
@@ -694,7 +746,7 @@ public class QuestionServiceImpl implements QuestionService {
         if(charas.size() == 0){
             return UNFOUND;
         }
-        res.append("查询到以下").append(String.valueOf(charas.size())).append("个结果\n");
+        res.append("查询到以下").append(charas.size()).append("个结果\n");
         for(AnimeCharacter chara:charas){
             Entity e=entityRepository.findEntityByBgmIdAndType(chara.getCharacterId(),"AnimeCharacter");
             Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
