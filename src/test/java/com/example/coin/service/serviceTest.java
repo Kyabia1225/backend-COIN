@@ -148,7 +148,7 @@ public class serviceTest {
 
     @Test
     public void test12() throws Exception {
-        String answer = questionService.answer("神谷浩史性别是");
+        String answer = questionService.answer("佐助也叫什么");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
     }

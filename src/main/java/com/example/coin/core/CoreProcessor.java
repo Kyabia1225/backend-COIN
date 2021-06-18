@@ -285,6 +285,9 @@ public class CoreProcessor {
             }else if(term.nature.toString().equals("director")){
                 abstractQuery.append("director ");
                 abstractMap.put("director", term.word);
+            }else if(term.nature.toString().equals("m")){
+                abstractQuery.append("m ");
+                abstractMap.put("m", term.word);
             }else{
                 abstractQuery.append(term.word).append(" ");
             }
