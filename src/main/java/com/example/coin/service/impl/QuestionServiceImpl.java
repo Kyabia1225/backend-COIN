@@ -32,10 +32,6 @@ public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private EntityRepository entityRepository;
     @Autowired RelationRepository relationRepository;
-    @Autowired
-    private EntityRepository entityRepository;
-    @Autowired
-    private RelationRepository relationRepository;
 
     @Override
     public String answer(String question) throws Exception {
