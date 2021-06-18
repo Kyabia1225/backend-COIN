@@ -121,7 +121,7 @@ public class QuestionServiceImpl implements QuestionService {
                 break;
             case 20:
                 //company 别名
-                answer=getCompanyOhterNames(strings.get(1));
+                answer=getCompanyOtherNames(strings.get(1));
                 break;
             case 21:
                 //company 创办日期
@@ -521,94 +521,107 @@ public class QuestionServiceImpl implements QuestionService {
         }
     }
     private String getCharacterGender(String character){
-        return "";
+        List<AnimeCharacter> animeCharacterList = animeCharacterRepository.findAnimeCharacterByNameLike(character);
+        if(animeCharacterList == null) return UNFOUND;
+        if(animeCharacterList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(animeCharacterList.size()>1){
+                stringBuilder.append("查询到以下").append(animeCharacterList.size()).append("个动画角色结果: \n\n");
+            }
+            for(AnimeCharacter charac:animeCharacterList){
+                stringBuilder.append(charac.getName()).append("性别为").append(charac.getGender()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
 
     private String getCharacter(String character){
-        List<AnimeCharacter> c=animeCharacterRepository.findAnimeCharacterByName(character);
+        List<AnimeCharacter> c=animeCharacterRepository.findAnimeCharacterByNameLike(character);
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(c);
-        String res="";
-        res+="查询到以下"+String.valueOf(charas.size())+"个结果\n";
+        StringBuilder res= new StringBuilder();
+        res.append("查询到以下").append(charas.size()).append("个结果\n");
         for(AnimeCharacter chara:charas){
-            res+="角色名: "+chara.getName()+"\n";
-            res+="角色介绍:"+chara.getDescription()+"\n";
+            res.append("角色名: ").append(chara.getName()).append("\n");
+            res.append("角色介绍:").append(chara.getDescription()).append("\n");
             //TODO 加入出自作品
         }
-        return res;
+        return res.toString();
     }
     private String getCharacterBirthday(String character){
-        List<AnimeCharacter> c=animeCharacterRepository.findAnimeCharacterByName(character);
+        List<AnimeCharacter> c=animeCharacterRepository.findAnimeCharacterByNameLike(character);
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(c);
-        String res="";
-        res+="查询到以下"+String.valueOf(charas.size())+"个结果\n";
+        StringBuilder res= new StringBuilder();
+        res.append("查询到以下").append(charas.size()).append("个结果\n");
         for(AnimeCharacter chara:charas){
-            res+="角色 "+chara.getName()+"的生日是";
-            res+=chara.getBirthday()+"\n";
+            res.append("角色 ").append(chara.getName()).append("的生日是");
+            res.append(chara.getBirthday()).append("\n");
         }
-        return res;
+        return res.toString();
     }
-    private String getCompanyOhterNames(String company){
+    private String getCompanyOtherNames(String company){
         List<AnimeCompany> companies = animeCompanyRepository.findAnimeCompanyByNameLike(company);
         List<AnimeCompany> companies1=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
-        String res="";
+        StringBuilder res= new StringBuilder();
         companies.addAll(companies1);
-        res+="查询到以下"+String.valueOf(companies.size())+"个结果\n";
+        res.append("查询到以下").append(companies.size()).append("个结果\n");
         for(AnimeCompany comp:companies){
-            res+="公司 "+comp.getName()+"的别名有";
+            res.append("公司 ").append(comp.getName()).append("的别名有");
             List<String> otherNames=comp.getOtherNames();
             for(String othername:otherNames){
-                res+=othername+" ";
+                res.append(othername).append(" ");
             }
-            res+="\n";
+            res.append("\n");
         }
-        return res;
+        return res.toString();
     }
     private String getCompanyBirthday(String company){
         List<AnimeCompany> companies = animeCompanyRepository.findAnimeCompanyByNameLike(company);
         List<AnimeCompany> companies1=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
-        String res="";
+        StringBuilder res= new StringBuilder();
         companies.addAll(companies1);
-        res+="查询到以下"+String.valueOf(companies.size())+"个结果\n";
+        res.append("查询到以下").append(companies.size()).append("个结果\n");
         for(AnimeCompany comp:companies){
-            res+="公司 "+comp.getName()+"的创办日期是";
-            res+=comp.getBirthday();
-            res+="\n";
+            res.append("公司 ").append(comp.getName()).append("的创办日期是");
+            res.append(comp.getBirthday());
+            res.append("\n");
         }
-        return res;
+        return res.toString();
     }
     private String getCompany(String company){
         List<AnimeCompany> companies = animeCompanyRepository.findAnimeCompanyByNameLike(company);
         List<AnimeCompany> companies1=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
-        String res="";
+        StringBuilder res= new StringBuilder();
         companies.addAll(companies1);
-        res+="查询到以下"+String.valueOf(companies.size())+"个结果\n";
+        res.append("查询到以下").append(String.valueOf(companies.size())).append("个结果\n");
         for(AnimeCompany comp:companies){
-            res+="公司 "+comp.getName()+"的创办日期是";
-            res+=comp.getBirthday();
-            res+="\n";
-            res+="公司的别名有";
+            res.append("公司 ").append(comp.getName()).append("的创办日期是");
+            res.append(comp.getBirthday());
+            res.append("\n");
+            res.append("公司的别名有");
             List<String> otherNames=comp.getOtherNames();
             for(String othername:otherNames){
-                res+=othername+" ";
+                res.append(othername).append(" ");
             }
-            res+="\n";
-            res+="公司介绍:"+comp.getDescription()+"\n";
+            res.append("\n");
+            res.append("公司介绍:").append(comp.getDescription()).append("\n");
         }
-        return res;
+        return res.toString();
     }
     private String getCVCharacters(String cvName){
-        String res="";
+        StringBuilder res= new StringBuilder();
         List<AnimeCV> cvs=animeCVRepository.findAnimeCVByNameLike(cvName);
         List<AnimeCV> cvs2=animeCVRepository.findAnimeCVByOtherNamesContaining(cvName);
         cvs.addAll(cvs2);
-        res+="查询到以下"+String.valueOf(cvs.size())+"个结果\n";
+        res.append("查询到以下").append(cvs.size()).append("个结果\n");
         for(AnimeCV cv:cvs){
             Entity e=entityRepository.findEntityByBgmIdAndType(cv.getCvId(),"AnimeCV");
             Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
 
-            res+="声优"+cv.getName()+"扮演的角色有以下:"+"\n";
+            res.append("声优").append(cv.getName()).append("扮演的角色有以下:").append("\n");
             Set<String> charaList=new HashSet<String>();
             for(Map.Entry entry:entries){
                 if(relationRepository.findRelationById(entry.getKey().toString()).getRelation().equals("扮演")){
@@ -617,17 +630,17 @@ public class QuestionServiceImpl implements QuestionService {
                 }
             }
             for(String s:charaList){
-                res+=s+" ";
+                res.append(s).append(" ");
             }
         }
-        return res;
+        return res.toString();
     }
     private String getCVAnimes(String cvName){
         String res="";
         List<AnimeCV> cvs=animeCVRepository.findAnimeCVByNameLike(cvName);
         List<AnimeCV> cvs2=animeCVRepository.findAnimeCVByOtherNamesContaining(cvName);
         cvs.addAll(cvs2);
-        res+="查询到以下"+String.valueOf(cvs.size())+"个结果\n";
+        res+="查询到以下"+ cvs.size() +"个结果\n";
         for(AnimeCV cv:cvs){
             Entity e=entityRepository.findEntityByBgmIdAndType(cv.getCvId(),"AnimeCV");
             Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
@@ -653,7 +666,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharacterByNameLike(character);
         List<AnimeCharacter> charas2=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(charas2);
-        res+="查询到以下"+String.valueOf(charas.size())+"个结果\n";
+        res+="查询到以下"+ charas.size() +"个结果\n";
         for(AnimeCharacter chara:charas){
             Entity e=entityRepository.findEntityByBgmIdAndType(chara.getCharacterId(),"AnimeCharacter");
             Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
@@ -671,7 +684,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharacterByNameLike(character);
         List<AnimeCharacter> charas2=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(charas2);
-        res+="查询到以下"+String.valueOf(charas.size())+"个结果\n";
+        res+="查询到以下"+ charas.size() +"个结果\n";
         for(AnimeCharacter chara:charas){
             Entity e=entityRepository.findEntityByBgmIdAndType(chara.getCharacterId(),"AnimeCharacter");
             Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
@@ -696,7 +709,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCompany> comps=animeCompanyRepository.findAnimeCompanyByNameLike(company);
         List<AnimeCompany> comps2=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
         comps.addAll(comps2);
-        res+="查询到以下"+String.valueOf(comps.size())+"个结果\n";
+        res+="查询到以下"+ comps.size() +"个结果\n";
         for(AnimeCompany comp:comps){
             Entity e=entityRepository.findEntityByBgmIdAndType(comp.getCompanyId(),"AnimeCompany");
             Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
@@ -720,6 +733,7 @@ public class QuestionServiceImpl implements QuestionService {
         return "";
     }
     private String getScoreHigherThanXAnime(String score){
+
         return "";
     }
     private String getScoreLowerThanXAnime(String score){
