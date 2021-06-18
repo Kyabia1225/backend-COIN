@@ -1,9 +1,0 @@
-character性别
-character男的女的
-character是男的吗？
-character是女的吗？
-character是什么性别的
-character是男声优吗
-character是女声优吗
-character是男的吗
-character是女的吗

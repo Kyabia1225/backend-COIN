@@ -2,12 +2,16 @@ package com.example.coin.service.impl;
 
 import com.example.coin.DAO.*;
 import com.example.coin.core.CoreProcessor;
-import com.example.coin.po.Anime;
+import com.example.coin.po.*;
+import com.example.coin.service.EntityService;
 import com.example.coin.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -23,6 +27,11 @@ public class QuestionServiceImpl implements QuestionService {
     private AnimeCompanyRepository animeCompanyRepository;
     @Autowired
     private AnimeDirectorRepository animeDirectorRepository;
+    @Autowired
+    private EntityRepository entityRepository;
+    @Autowired
+    private RelationRepository relationRepository;
+
     @Override
     public String answer(String question) throws Exception {
         List<String> strings = coreProcessor.analysis(question);
@@ -158,22 +167,18 @@ public class QuestionServiceImpl implements QuestionService {
                 answer=getAnimeCompany(strings.get(1));
                 break;
             case 32:
-                //anime 的导演
-                answer=getAnimeDirectors(strings.get(1));
-                break;
-            case 33:
                 //评分大于 m 动画
                 answer=getScoreHigherThanXAnime(strings.get(2));
                 break;
-            case 34:
+            case 33:
                 //评分小于 m 动画
                 answer=getScoreLowerThanXAnime(strings.get(2));
                 break;
-            case 35:
+            case 34:
                 //m 年 放送的动画
                 answer=getYYYYAnime(strings.get(1));
                 break;
-            case 36:
+            case 35:
                 //cv cv 合作作品
                 answer=getCVandCVCooperateAnime(strings.get(1),strings.get(3));
                 break;
@@ -276,53 +281,259 @@ public class QuestionServiceImpl implements QuestionService {
     private String getCharacterGender(String character){
         return "";
     }
+
     private String getCharacter(String character){
-        return "";
+        List<AnimeCharacter> c=animeCharacterRepository.findAnimeCharacterByName(character);
+        List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
+        charas.addAll(c);
+        String res="";
+        res+="查询到以下"+String.valueOf(charas.size())+"个结果\n";
+        for(AnimeCharacter chara:charas){
+            res+="角色名: "+chara.getName()+"\n";
+            res+="角色介绍:"+chara.getDescription()+"\n";
+            //TODO 加入出自作品
+        }
+        return res;
     }
     private String getCharacterBirthday(String character){
-        return "";
+        List<AnimeCharacter> c=animeCharacterRepository.findAnimeCharacterByName(character);
+        List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
+        charas.addAll(c);
+        String res="";
+        res+="查询到以下"+String.valueOf(charas.size())+"个结果\n";
+        for(AnimeCharacter chara:charas){
+            res+="角色 "+chara.getName()+"的生日是";
+            res+=chara.getBirthday()+"\n";
+        }
+        return res;
     }
     private String getCompanyOhterNames(String company){
-        return "";
+        List<AnimeCompany> companies = animeCompanyRepository.findAnimeCompanyByNameLike(company);
+        List<AnimeCompany> companies1=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
+        String res="";
+        companies.addAll(companies1);
+        res+="查询到以下"+String.valueOf(companies.size())+"个结果\n";
+        for(AnimeCompany comp:companies){
+            res+="公司 "+comp.getName()+"的别名有";
+            List<String> otherNames=comp.getOtherNames();
+            for(String othername:otherNames){
+                res+=othername+" ";
+            }
+            res+="\n";
+        }
+        return res;
     }
     private String getCompanyBirthday(String company){
-        return "";
+        List<AnimeCompany> companies = animeCompanyRepository.findAnimeCompanyByNameLike(company);
+        List<AnimeCompany> companies1=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
+        String res="";
+        companies.addAll(companies1);
+        res+="查询到以下"+String.valueOf(companies.size())+"个结果\n";
+        for(AnimeCompany comp:companies){
+            res+="公司 "+comp.getName()+"的创办日期是";
+            res+=comp.getBirthday();
+            res+="\n";
+        }
+        return res;
     }
     private String getCompany(String company){
-        return "";
+        List<AnimeCompany> companies = animeCompanyRepository.findAnimeCompanyByNameLike(company);
+        List<AnimeCompany> companies1=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
+        String res="";
+        companies.addAll(companies1);
+        res+="查询到以下"+String.valueOf(companies.size())+"个结果\n";
+        for(AnimeCompany comp:companies){
+            res+="公司 "+comp.getName()+"的创办日期是";
+            res+=comp.getBirthday();
+            res+="\n";
+            res+="公司的别名有";
+            List<String> otherNames=comp.getOtherNames();
+            for(String othername:otherNames){
+                res+=othername+" ";
+            }
+            res+="\n";
+            res+="公司介绍:"+comp.getDescription()+"\n";
+        }
+        return res;
     }
-    private String getCVCharacters(String cv){
-        return "";
+    private String getCVCharacters(String cvName){
+        String res="";
+        List<AnimeCV> cvs=animeCVRepository.findAnimeCVByNameLike(cvName);
+        List<AnimeCV> cvs2=animeCVRepository.findAnimeCVByOtherNamesContaining(cvName);
+        cvs.addAll(cvs2);
+        res+="查询到以下"+String.valueOf(cvs.size())+"个结果\n";
+        for(AnimeCV cv:cvs){
+            Entity e=entityRepository.findEntityByBgmIdAndType(cv.getCvId(),"AnimeCV");
+            Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
+
+            res+="声优"+cv.getName()+"扮演的角色有以下:"+"\n";
+            Set<String> charaList=new HashSet<String>();
+            for(Map.Entry entry:entries){
+                if(relationRepository.findRelationById(entry.getKey().toString()).getRelation().equals("扮演")){
+                    charaList.add(entityRepository.findEntityById(entry.getValue().toString()).getName());
+                    //res+=entityRepository.findEntityById(entry.getValue().toString()).getName()+" ";
+                }
+            }
+            for(String s:charaList){
+                res+=s+" ";
+            }
+        }
+        return res;
     }
-    private String getCVAnimes(String cv){
-        return "";
+    private String getCVAnimes(String cvName){
+        String res="";
+        List<AnimeCV> cvs=animeCVRepository.findAnimeCVByNameLike(cvName);
+        List<AnimeCV> cvs2=animeCVRepository.findAnimeCVByOtherNamesContaining(cvName);
+        cvs.addAll(cvs2);
+        res+="查询到以下"+String.valueOf(cvs.size())+"个结果\n";
+        for(AnimeCV cv:cvs){
+            Entity e=entityRepository.findEntityByBgmIdAndType(cv.getCvId(),"AnimeCV");
+            Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
+
+            res+="声优"+cv.getName()+"配音的动画有以下:"+"\n";
+            for(Map.Entry entry:entries){
+                if(relationRepository.findRelationById(entry.getKey().toString()).getRelation().equals("配音")){
+                    res+=entityRepository.findEntityById(entry.getValue().toString()).getName()+"    ";
+                }
+            }
+        }
+        return res;
     }
     private String getIfCVDubCharacter(String cv,String character){
+
         return "";
     }
     private String getIfCVDubAnime(String cv,String anime){
         return "";
     }
     private String getCharacterAnimes(String character){
-        return "";
+        String res="";
+        List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharacterByNameLike(character);
+        List<AnimeCharacter> charas2=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
+        charas.addAll(charas2);
+        res+="查询到以下"+String.valueOf(charas.size())+"个结果\n";
+        for(AnimeCharacter chara:charas){
+            Entity e=entityRepository.findEntityByBgmIdAndType(chara.getCharacterId(),"AnimeCharacter");
+            Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
+            res+="角色"+chara.getName()+"出演的动画有以下:"+"\n";
+            for(Map.Entry entry:entries){
+                if(relationRepository.findRelationById(entry.getKey().toString()).getRelation().equals("出演")){
+                    res+=entityRepository.findEntityById(entry.getValue().toString()).getName()+"    ";
+                }
+            }
+        }
+        return res;
     }
     private String getCharacteCVs(String character){
-        return "";
+        String res="";
+        List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharacterByNameLike(character);
+        List<AnimeCharacter> charas2=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
+        charas.addAll(charas2);
+        res+="查询到以下"+String.valueOf(charas.size())+"个结果\n";
+        for(AnimeCharacter chara:charas){
+            Entity e=entityRepository.findEntityByBgmIdAndType(chara.getCharacterId(),"AnimeCharacter");
+            Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
+
+            res+="角色"+chara.getName()+"的声优有以下:"+"\n";
+            Set<String> cvList=new HashSet<String>();
+            for(Map.Entry entry:entries){
+                if(relationRepository.findRelationById(entry.getKey().toString()).getRelation().equals("扮演")){
+                    cvList.add(entityRepository.findEntityById(entry.getValue().toString()).getName()+" ");
+                    //res+=entityRepository.findEntityById(entry.getValue().toString()).getName()+" ";
+                }
+            }
+            for(String s:cvList){
+                res+=s+" ";
+            }
+        }
+
+        return res;
     }
     private String getCompanyAnimes(String company){
-        return "";
+        String res="";
+        List<AnimeCompany> comps=animeCompanyRepository.findAnimeCompanyByNameLike(company);
+        List<AnimeCompany> comps2=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
+        comps.addAll(comps2);
+        res+="查询到以下"+String.valueOf(comps.size())+"个结果\n";
+        for(AnimeCompany comp:comps){
+            Entity e=entityRepository.findEntityByBgmIdAndType(comp.getCompanyId(),"AnimeCompany");
+            Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
+
+            res+="公司"+comp.getName()+"制作的动画有以下:"+"\n";
+            for(Map.Entry entry:entries){
+                if(relationRepository.findRelationById(entry.getKey().toString()).getRelation().equals("制作")){
+                    res+=entityRepository.findEntityById(entry.getValue().toString()).getName()+"    ";
+                }
+            }
+        }
+        return res;
     }
     private String getDirectorAnimes(String director){
-        return "";
+        String res="";
+        List<AnimeDirector> dirs=animeDirectorRepository.findAnimeDirectorByNameLike(director);
+        List<AnimeDirector> dirs2=animeDirectorRepository.findAnimeDirectorByOtherNamesContaining(director);
+        dirs.addAll(dirs2);
+        res+="查询到以下"+String.valueOf(dirs.size())+"个结果\n";
+        for(AnimeDirector dir:dirs){
+            Entity e=entityRepository.findEntityByBgmIdAndType(dir.getDirectorId(),"AnimeDirector");
+            Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
+            res+="导演"+dir.getName()+"执导的动画有以下:"+"\n";
+            for(Map.Entry entry:entries){
+                if(relationRepository.findRelationById(entry.getKey().toString()).getRelation().equals("导演")){
+                    res+=entityRepository.findEntityById(entry.getValue().toString()).getName()+"    ";
+                }
+            }
+            res+="\n";
+        }
+        return res;
     }
     private String getAnimeCompany(String anime){
-        return "";
+        String res="";
+        List<Anime> animes=animeRepository.findAnimeByTitleLike(anime);
+        List<Anime> animes2=animeRepository.findAnimeByJapaneseNameLike(anime);
+        animes.addAll(animes2);
+        res+="查询到以下"+String.valueOf(animes.size())+"个结果\n";
+        for(Anime ani:animes){
+            Entity e=entityRepository.findEntityByBgmIdAndType(ani.getAnimeId(),"Anime");
+            Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
+            res+="动画"+ani.getTitle()+"的制作公司是:"+"\n";
+            for(Map.Entry entry:entries){
+                if(relationRepository.findRelationById(entry.getKey().toString()).getRelation().equals("制作")){
+                    res+=entityRepository.findEntityById(entry.getValue().toString()).getName()+"    ";
+                }
+            }
+            res+="\n";
+        }
+        return res;
     }
     private String getAnimeDirectors(String anime){
-        return "";
+        String res="";
+        List<Anime> animes=animeRepository.findAnimeByTitleLike(anime);
+        List<Anime> animes2=animeRepository.findAnimeByJapaneseNameLike(anime);
+        animes.addAll(animes2);
+        res+="查询到以下"+String.valueOf(animes.size())+"个结果\n";
+        for(Anime ani:animes){
+            Entity e=entityRepository.findEntityByBgmIdAndType(ani.getAnimeId(),"Anime");
+            Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
+            res+="动画"+ani.getTitle()+"的导演是:"+"\n";
+            for(Map.Entry entry:entries){
+                if(relationRepository.findRelationById(entry.getKey().toString()).getRelation().equals("导演")){
+                    res+=entityRepository.findEntityById(entry.getValue().toString()).getName()+" ";
+                }
+            }
+            res+="\n";
+        }
+        return res;
     }
     private String getScoreHigherThanXAnime(String score){
-        return "";
+        System.out.println(score);
+        String res="";
+        Double sc=Double.parseDouble(score);
+        List<Anime> animes=animeRepository.findAnimeByScoreGreaterThan(sc);
+        for(Anime anime:animes){
+            res+=anime.getTitle()+" ";
+        }
+        return res;
     }
     private String getScoreLowerThanXAnime(String score){
         return "";
