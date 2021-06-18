@@ -220,13 +220,13 @@ public class serviceTest {
     }
     @Test
     public void testQ_30() throws Exception {
-        String answer = questionService.answer("火影忍者的制作公司是谁");
+        String answer = questionService.answer("ahshd的制作公司是谁");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
     }
     @Test
     public void testQ_31() throws Exception {
-        String answer = questionService.answer("火影忍者的导演是谁");
+        String answer = questionService.answer("XXX的导演是谁");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
     }
@@ -238,7 +238,7 @@ public class serviceTest {
     }
     @Test
     public void testQ_33() throws Exception {
-        String answer = questionService.answer("评分小于9.0的动画有哪些");
+        String answer = questionService.answer("评分小于5.0的动画有哪些");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
     }

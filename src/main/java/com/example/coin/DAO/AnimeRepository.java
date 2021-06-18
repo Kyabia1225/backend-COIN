@@ -10,6 +10,6 @@ public interface AnimeRepository extends MongoRepository<Anime, String> {
     Anime findAnimeByAnimeId(String id);
     List<Anime> findAnimeByTitleLike(String title);
     List<Anime> findAnimeByJapaneseNameLike(String title);
-    @Query("select * from Anime where score>=${sc}")
     List<Anime> findAnimeByScoreGreaterThan(Double sc);
+    List<Anime> findAnimeByScoreLessThan(Double sc);
 }
