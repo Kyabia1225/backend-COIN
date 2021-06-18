@@ -2,7 +2,7 @@ package com.example.coin.service.impl;
 
 import com.example.coin.DAO.*;
 import com.example.coin.core.CoreProcessor;
-import com.example.coin.po.Anime;
+import com.example.coin.po.*;
 import com.example.coin.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
+    private static final String UNFOUND = "没有查找到相关结果。\n";
     @Autowired
     private CoreProcessor coreProcessor;
     @Autowired
@@ -23,6 +24,9 @@ public class QuestionServiceImpl implements QuestionService {
     private AnimeCompanyRepository animeCompanyRepository;
     @Autowired
     private AnimeDirectorRepository animeDirectorRepository;
+    @Autowired
+    private EntityRepository entityRepository;
+    @Autowired RelationRepository relationRepository;
     @Override
     public String answer(String question) throws Exception {
         List<String> strings = coreProcessor.analysis(question);
@@ -184,94 +188,332 @@ public class QuestionServiceImpl implements QuestionService {
 
     private String getAnimeScore(String anime){
         //1:anime 评分
-        List<Anime> animes = animeRepository.findAnimeByTitleLike(anime);
-        int size = animes.size();
+        List<Anime> animeList = animeRepository.findAnimeByTitleLike(anime);
+        if(animeList == null) return UNFOUND;
+        int size = animeList.size();
         if(size == 0){
-            return "没有查找到相关结果。";
+            return UNFOUND;
         }else if(size == 1){
-            return anime+" 的评分是"+animes.get(0).getScore();
+            return anime+" 的评分是"+animeList.get(0).getScore() + "\n";
         }else{
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("查询到以下").append(size).append("个结果: \n");
-            for(Anime foundAnime:animes){
+            for(Anime foundAnime:animeList){
                 stringBuilder.append(foundAnime.getTitle()).append(" 的评分是").append(foundAnime.getScore()).append("\n");
             }
             return stringBuilder.toString();
         }
     }
     private String getAnimeStartDate(String anime){
-        List<Anime> animes = animeRepository.findAnimeByTitleLike(anime);int size = animes.size();
+        List<Anime> animeList = animeRepository.findAnimeByTitleLike(anime);
+        if(animeList == null) return UNFOUND;
+        int size = animeList.size();
         if(size == 0){
-            return "没有查找到相关结果。";
+            return UNFOUND;
         }else if(size == 1) {
-            return anime + " 的放送日期是" + animes.get(0).getStartDate();
+            return anime + " 的放送日期是" + animeList.get(0).getStartDate() + "\n";
         }else{
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("查询到以下").append(size).append("个结果: \n");
-            for(Anime foundAnime:animes) {
+            for(Anime foundAnime:animeList) {
                 stringBuilder.append(foundAnime.getTitle()).append(" 的放送日期是").append(foundAnime.getStartDate()).append("\n");
             }
             return stringBuilder.toString();
         }
     }
     private String getAnimeOtherNames(String anime){
-        List<Anime> animes = animeRepository.findAnimeByTitleLike(anime);int size = animes.size();
+        List<Anime> animeList = animeRepository.findAnimeByTitleLike(anime);
+        if(animeList == null) return UNFOUND;
+        int size = animeList.size();
         if(size == 0){
-            return "没有查找到相关结果。";
+            return UNFOUND;
         }else if(size == 1) {
-            return anime + " 的日文名是" + animes.get(0).getJapaneseName();
+            return anime + " 的日文名是" + animeList.get(0).getJapaneseName() + "\n";
         }else{
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("查询到以下").append(size).append("个结果: \n");
-            for(Anime foundAnime:animes) {
+            for(Anime foundAnime:animeList) {
                 stringBuilder.append(foundAnime.getTitle()).append(" 的日文名是").append(foundAnime.getJapaneseName()).append("\n");
             }
             return stringBuilder.toString();
         }
     }
     private String getLength(String anime){
-        return "";
+        List<Anime> animeList = animeRepository.findAnimeByTitleLike(anime);
+        if(animeList == null) return UNFOUND;
+        int size = animeList.size();
+        if(size == 0){
+            return UNFOUND;
+        }else if(size == 1) {
+            if(animeList.get(0).getLength().equals("1")) {
+                return anime + " 共有" + animeList.get(0).getLength()+"集, 推测是剧场版动画\n";
+            }else {
+                return anime + " 共有" + animeList.get(0).getLength()+"集\n";
+            }
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("查询到以下").append(size).append("个结果: \n");
+            for(Anime foundAnime:animeList) {
+                if(foundAnime.getLength().equals("1"))
+                    stringBuilder.append(foundAnime.getTitle()).append(" 共有").append(foundAnime.getLength()).append("集, 推测是剧场版动画\n");
+                else{
+                    stringBuilder.append(foundAnime.getTitle()).append(" 共有").append(foundAnime.getLength()).append("集\n");
+                }
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getAnimeDirector(String anime){
         //5:anime 导演
-        return "";
+        List<Anime> animeList = animeRepository.findAnimeByTitleLike(anime);
+        if(animeList == null) return UNFOUND;
+        int size = animeList.size();
+        if(size == 0){
+            return UNFOUND;
+        }else if(size == 1) {
+            if(animeList.get(0).getDirector()!=null) {
+                return anime + " 的导演是" + animeList.get(0).getDirector() + "\n";
+            }else{
+                return anime + " 的导演未知\n";
+            }
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("查询到以下").append(size).append("个结果: \n");
+            for(Anime foundAnime:animeList) {
+                if(foundAnime.getDirector()!=null) {
+                    stringBuilder.append(foundAnime.getTitle()).append(" 的导演是").append(foundAnime.getDirector()).append("\n");
+                }else{
+                    stringBuilder.append(foundAnime.getTitle()).append(" 的导演未知\n");
+                }
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getAnime(String anime){
-        //TODO 整体的介绍一下这个动画，各方面信息都可以有
-        return "";
+        List<Anime> animeList = animeRepository.findAnimeByTitleLike(anime);
+        if(animeList == null) return UNFOUND;
+        int size = animeList.size();
+        if(size == 0){
+            return UNFOUND;
+        }else if(size == 1) {
+            return animeList.get(0).getDescription()+"\n";
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("查询到以下").append(size).append("个结果: \n");
+            for(Anime foundAnime:animeList) {
+                stringBuilder.append(foundAnime.getTitle()).append(" 简介如下:\n").append(foundAnime.getDescription()).append("\n\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getAnimeCharacters(String anime){
-        return "";
+        List<Anime> animeList = animeRepository.findAnimeByTitleLike(anime);
+        if(animeList == null) return UNFOUND;
+        int size = animeList.size();
+        if(size == 0){
+            return UNFOUND;
+        }else if(size == 1){
+            List<String> characterList = animeList.get(0).getCharacterList();
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(animeList.get(0).getTitle()).append("有以下主要角色: \n");
+            for(String characterId:characterList){
+                AnimeCharacter character = animeCharacterRepository.findAnimeCharacterByCharacterId(characterId);
+                stringBuilder.append(character.getName()).append(":").append(character.getDescription()).append("\n");
+            }
+            return stringBuilder.toString();
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("查询到以下").append(size).append("个结果: \n\n");
+            for(Anime foundAnime:animeList){
+                List<String> characterList = foundAnime.getCharacterList();
+                stringBuilder.append(foundAnime.getTitle()).append("有以下主要角色: \n");
+                for(String characterId:characterList){
+                    AnimeCharacter character = animeCharacterRepository.findAnimeCharacterByCharacterId(characterId);
+                    stringBuilder.append(character.getName()).append(":").append(character.getDescription()).append("\n");
+                }
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getAnimeCVs(String anime){
-        return "";
+        List<Anime> animeList = animeRepository.findAnimeByTitleLike(anime);
+        if(animeList == null) return UNFOUND;
+        int size = animeList.size();
+        if(size == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(size>1){
+                stringBuilder.append("查询到以下").append(size).append("个结果: \n\n");
+            }
+            for(Anime foundAnime:animeList) {
+                List<String> characterList = foundAnime.getCharacterList();
+                stringBuilder.append(foundAnime.getTitle()).append("有以下主要配音演员: \n");
+                for (String characterId : characterList) {
+                    Entity animeCharacter = entityRepository.findEntityByBgmIdAndType(characterId, "AnimeCharacter");
+                    for (String cv : animeCharacter.getRelatesTo().values()) {
+                        Entity cvEntity = entityRepository.findEntityById(cv);
+                        if (cvEntity.getType().equals("AnimeCV")) {
+                            stringBuilder.append(cvEntity.getName()).append("配音了").append(animeCharacter.getName()).append("\n");
+                        }
+                    }
+                }
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getCVOtherNames(String cv){
-        return "";
+        List<AnimeCV> cvList = animeCVRepository.findAnimeCVByNameLike(cv);
+        if(cvList == null) return UNFOUND;
+        if(cvList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(cvList.size()>1){
+                stringBuilder.append("查询到以下").append(cvList.size()).append("个声优结果: \n\n");
+            }
+            for(AnimeCV CV:cvList){
+                stringBuilder.append(CV.getName()).append("有这些别名: ");
+                for(String otherName:CV.getOtherNames()){
+                    stringBuilder.append(otherName).append(" ");
+                }
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getCVGender(String cv){
-        return "";
+        List<AnimeCV> cvList = animeCVRepository.findAnimeCVByNameLike(cv);
+        if(cvList == null) return UNFOUND;
+        if(cvList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(cvList.size()>1){
+                stringBuilder.append("查询到以下").append(cvList.size()).append("个声优结果: \n\n");
+            }
+            for(AnimeCV CV:cvList){
+                stringBuilder.append(CV.getName()).append("性别为").append(CV.getGender()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getCV(String cv){
-        return "";
+        List<AnimeCV> cvList = animeCVRepository.findAnimeCVByNameLike(cv);
+        if(cvList == null) return UNFOUND;
+        if(cvList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(cvList.size()>1){
+                stringBuilder.append("查询到以下").append(cvList.size()).append("个声优结果: \n\n");
+            }
+            for(AnimeCV CV:cvList){
+                stringBuilder.append(CV.getName()).append("信息如下:\n").append(CV.getDescription()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getCVBirthday(String cv){
-        return "";
+        List<AnimeCV> cvList = animeCVRepository.findAnimeCVByNameLike(cv);
+        if(cvList == null) return UNFOUND;
+        if(cvList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(cvList.size()>1){
+                stringBuilder.append("查询到以下").append(cvList.size()).append("个声优结果: \n\n");
+            }
+            for(AnimeCV CV:cvList){
+                stringBuilder.append(CV.getName()).append("生日是").append(CV.getBirthday()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getDirectorOtherNames(String director){
-        return "";
+        List<AnimeDirector> directorList = animeDirectorRepository.findAnimeDirectorByNameLike(director);
+        if(directorList == null) return UNFOUND;
+        if(directorList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(directorList.size()>1){
+                stringBuilder.append("查询到以下").append(directorList.size()).append("个导演结果: \n\n");
+            }
+            for(AnimeDirector direc:directorList){
+                stringBuilder.append(direc.getName()).append("有这些别名: ");
+                for(String otherName:direc.getOtherNames()){
+                    stringBuilder.append(otherName).append(" ");
+                }
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getDirectorGender(String director){
-        return "";
+        List<AnimeDirector> directorList = animeDirectorRepository.findAnimeDirectorByNameLike(director);
+        if(directorList == null) return UNFOUND;
+        if(directorList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(directorList.size()>1){
+                stringBuilder.append("查询到以下").append(directorList.size()).append("个导演结果: \n\n");
+            }
+            for(AnimeDirector direc:directorList){
+                stringBuilder.append(direc.getName()).append("性别为").append(direc.getGender()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getDirectorBirthday(String director){
-        return "";
+        List<AnimeDirector> directorList = animeDirectorRepository.findAnimeDirectorByNameLike(director);
+        if(directorList == null) return UNFOUND;
+        if(directorList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(directorList.size()>1){
+                stringBuilder.append("查询到以下").append(directorList.size()).append("个导演结果: \n\n");
+            }
+            for(AnimeDirector direc:directorList){
+                stringBuilder.append(direc.getName()).append("生日是").append(direc.getBirthday()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getDirector(String director){
-        return "";
+        List<AnimeDirector> directorList = animeDirectorRepository.findAnimeDirectorByNameLike(director);
+        if(directorList == null) return UNFOUND;
+        if(directorList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(directorList.size()>1){
+                stringBuilder.append("查询到以下").append(directorList.size()).append("个导演结果: \n\n");
+            }
+            for(AnimeDirector direc:directorList){
+                stringBuilder.append(direc.getName()).append("信息如下:\n").append(direc.getDescription()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getCharacterOtherNames(String character){
-        return "";
+        List<AnimeCharacter> characterList = animeCharacterRepository.findAnimeCharacterByNameContaining(character);
+        if(characterList == null) return UNFOUND;
+        if(characterList.size() == 0){
+            return UNFOUND;
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            if(characterList.size()>1){
+                stringBuilder.append("查询到以下").append(characterList.size()).append("个动画角色结果: \n\n");
+            }
+            for(AnimeCharacter chara:characterList){
+                stringBuilder.append(chara.getName()).append("有这些别名: ");
+                for(String otherName:chara.getOtherNames()){
+                    stringBuilder.append(otherName).append(" ");
+                }
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getCharacterGender(String character){
         return "";

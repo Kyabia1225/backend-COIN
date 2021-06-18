@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 @SpringBootTest
-@Ignore
+
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class serviceTest {
@@ -145,7 +145,7 @@ public class serviceTest {
 
     @Test
     public void test12() throws Exception {
-        String answer = questionService.answer("灼眼的夏娜什么时候开始播的");
+        String answer = questionService.answer("神谷浩史性别是");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
     }
