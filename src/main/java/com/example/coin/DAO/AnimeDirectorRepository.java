@@ -9,4 +9,5 @@ public interface AnimeDirectorRepository extends MongoRepository<AnimeDirector, 
     AnimeDirector findAnimeDirectorByDirectorId(String directorId);
     List<AnimeDirector> findAnimeDirectorByNameLike(String name);
     List<AnimeDirector> findAnimeDirectorByOtherNamesContaining(String name);
+
 }

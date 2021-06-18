@@ -9,4 +9,5 @@ public interface AnimeCVRepository extends MongoRepository<AnimeCV, String> {
     AnimeCV findAnimeCVByCvId(String CvId);
     List<AnimeCV> findAnimeCVByNameLike(String name);
     List<AnimeCV> findAnimeCVByOtherNamesContaining(String name);
+
 }
