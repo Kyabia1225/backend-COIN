@@ -17,6 +17,6 @@ public class QuestionController {
         String answer = questionService.answer(question);
         if(answer.equals(""))
             return ResponseVO.buildFailure("无法理解你的问题");
-        return ResponseVO.bulidSuccess(answer);
+        return ResponseVO.buildSuccess(answer);
     }
 }
