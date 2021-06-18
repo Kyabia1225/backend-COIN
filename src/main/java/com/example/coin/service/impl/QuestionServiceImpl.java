@@ -10,12 +10,12 @@ import java.util.List;
 @Service
 public class QuestionServiceImpl implements QuestionService {
     @Autowired
-    private CoreProcessor core;
+    private CoreProcessor coreProcessor;
 
     @Override
     public String answer(String question) throws Exception {
-        List<String> strings = core.analysis(question);
-        int index=Integer.valueOf(strings.get(0));
+        List<String> strings = coreProcessor.analysis(question);
+        int index=Integer.parseInt(strings.get(0));
         String answer="";
         switch(index){
             case 0:

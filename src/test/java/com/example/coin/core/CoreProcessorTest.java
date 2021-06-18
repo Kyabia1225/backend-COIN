@@ -20,8 +20,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 @Ignore
+@RunWith(SpringRunner.class)
 public class CoreProcessorTest {
     @Autowired
     private CoreProcessor coreProcessor;
