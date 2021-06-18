@@ -14,6 +14,7 @@ public interface EntityService {
     boolean deleteEntityById(String id);
     //查询实体
     EntityVO getEntityById(String id);
+    EntityVO getEntity(Entity entity);
     //更新实体
     boolean updateEntityById(String id, Entity e, boolean updateAll);
     //获取所有实体
@@ -28,5 +29,6 @@ public interface EntityService {
     ResponseVO updateLocations(List<Entity>entities);
 
     //搜索相关功能
-    Set<String> fuzzySearch(String condition);
+    //Set<String> fuzzySearch(String condition);
+    List<EntityVO> searchByName(String name);
 }

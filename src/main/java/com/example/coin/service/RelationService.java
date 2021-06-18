@@ -27,5 +27,5 @@ public interface RelationService {
     Set<RelationVO> getAssociatedRelations(String id);
 
     //搜索相关功能
-    Set<String> fuzzySearch(String condition);
+    //Set<String> fuzzySearch(String condition);
 }

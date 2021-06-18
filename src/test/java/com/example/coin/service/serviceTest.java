@@ -24,6 +24,7 @@ import java.util.Set;
 @SpringBootTest
 
 @RunWith(SpringRunner.class)
+@Ignore
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class serviceTest {
     @Autowired
@@ -85,12 +86,6 @@ public class serviceTest {
     }
     @Ignore
     @Test
-    public void test041(){
-        Set<String> friendly = relationService.fuzzySearch("friendly");
-        Assert.assertTrue(friendly.size()>0);
-    }
-    @Ignore
-    @Test
     public void test05(){
         int size = relationService.getAllRelationships().size();
         relationService.deleteRelationById(relationRepository.findRelationsByRelation("friendly to").get(0).getId());
@@ -106,12 +101,6 @@ public class serviceTest {
         huixiang = entityRepository.findEntitiesByName("huixiang").get(0);
         Assert.assertEquals(0, huixiang.getRelatesTo().size());
         Assert.assertNull(relationRepository.findRelationById(friendly_to.getId()));
-    }
-    @Ignore
-    @Test
-    public void test07(){
-        Set<String> huixiang = entityService.fuzzySearch("huxiang");
-        Assert.assertEquals(1, huixiang.size());
     }
     @Ignore
     @Test
@@ -261,5 +250,12 @@ public class serviceTest {
         String answer = questionService.answer("2020年10月番");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
+    }
+    @Test
+    public void test37(){
+        List<EntityVO> name = entityService.searchByName("小清水");
+        for(EntityVO e:name){
+            System.out.println(e.getName() + e.getType()+" "+e.getId());
+        }
     }
 }

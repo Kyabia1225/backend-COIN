@@ -1,5 +1,6 @@
 package com.example.coin.util;
 
+//原本是fuzzySearch的组件，不再使用（过于低效）
 public class StringDistance {
     public static int calculate(String A, String B){
         if(A.equals(B)) return 0;

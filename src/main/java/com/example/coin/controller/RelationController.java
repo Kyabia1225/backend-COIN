@@ -70,6 +70,8 @@ public class RelationController {
         else return ResponseVO.buildSuccess();
     }
 
+ /*
+    //方法过时不再使用
     @GetMapping(path = "/relationSearch")
     public  ResponseVO searchRelation(@RequestParam(value = "keyword")String keyword){
         Set<String> res = relationService.fuzzySearch(keyword);
@@ -78,7 +80,7 @@ public class RelationController {
         }else{
             return ResponseVO.buildSuccess(res);
         }
-    }
+    }*/
 
     @GetMapping(path = "/getAssociatedRelations")
     public ResponseVO getAssociatedRelations(@RequestParam String id){//这里的id是EntityId

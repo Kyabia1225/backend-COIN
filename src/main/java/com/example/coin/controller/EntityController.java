@@ -66,12 +66,23 @@ public class EntityController {
         return entityService.updateLocations(entities);
     }
 
+/*
+    //该方法过时了 不再使用
     @GetMapping(path = "/entitySearch")
     public ResponseVO searchEntity(@RequestParam(value = "keyword")String keyword){
         Set<String> result = entityService.fuzzySearch(keyword);
         if(result.isEmpty()) return ResponseVO.buildFailure("未查找到相关实体");
         else{
             return ResponseVO.buildSuccess(result);
+        }
+    }*/
+    @GetMapping(path = "/searchByName")
+    public ResponseVO searchByName(@RequestParam String name){
+        List<EntityVO> list = entityService.searchByName(name);
+        if(list == null||list.size() == 0){
+            return ResponseVO.buildFailure("未查找到相关结果");
+        }else {
+            return ResponseVO.buildSuccess(list);
         }
     }
 

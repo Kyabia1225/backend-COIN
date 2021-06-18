@@ -72,6 +72,11 @@ public class EntityServiceImpl implements EntityService {
     public EntityVO getEntityById(String id) {
         if(id == null) return null;
         Entity entity = entityRepository.findEntityById(id);
+        return getEntity(entity);
+    }
+
+    @Override
+    public EntityVO getEntity(Entity entity) {
         if(entity == null) return null;
         switch (entity.getType()) {
             case "Anime": {
@@ -253,6 +258,69 @@ public class EntityServiceImpl implements EntityService {
     }
 
     @Override
+    public List<EntityVO> searchByName(String name) {
+        List<EntityVO> res = new LinkedList<>();
+        //先搜索动画
+        List<Anime> animeList = animeRepository.findAnimeByTitleLike(name);
+        if(animeList!=null && animeList.size()>0){
+            for(Anime anime:animeList){
+                res.add(getEntity(entityRepository.findEntityByBgmIdAndType(anime.getAnimeId(), "Anime")));
+            }
+        }
+        //搜索人物
+        List<AnimeCharacter> characterList = animeCharacterRepository.findAnimeCharacterByNameLike(name);
+        if(characterList!=null && characterList.size()>0){
+            for(AnimeCharacter animeCharacter:characterList){
+                res.add(getEntity(entityRepository.findEntityByBgmIdAndType(animeCharacter.getCharacterId(), "AnimeCharacter")));
+            }
+        }else{  //如果 name查找不到就得用别名
+            List<AnimeCharacter> otherNames = animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(name);
+            for(AnimeCharacter otherName:otherNames){
+                res.add(getEntity(entityRepository.findEntityByBgmIdAndType(otherName.getCharacterId(), "AnimeCharacter")));
+            }
+        }
+        //搜索CV
+        List<AnimeCV> cvList = animeCVRepository.findAnimeCVByNameLike(name);
+        if(cvList!=null && cvList.size()>0){
+            for(AnimeCV cv:cvList){
+                res.add(getEntity(entityRepository.findEntityByBgmIdAndType(cv.getCvId(), "AnimeCV")));
+            }
+        }else{
+            List<AnimeCV> otherNames = animeCVRepository.findAnimeCVByOtherNamesContaining(name);
+            for(AnimeCV otherName:otherNames){
+                res.add(getEntity(entityRepository.findEntityByBgmIdAndType(otherName.getCvId(), "AnimeCV")));
+            }
+        }
+        //搜索动画公司
+        List<AnimeCompany> companyList = animeCompanyRepository.findAnimeCompanyByNameLike(name);
+        if(companyList!=null && companyList.size()>0){
+            for(AnimeCompany company:companyList){
+                res.add(getEntity(entityRepository.findEntityByBgmIdAndType(company.getCompanyId(), "AnimeCompany")));
+            }
+        }else{
+            List<AnimeCompany> otherNames = animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(name);
+            for(AnimeCompany otherName:otherNames){
+                res.add(getEntity(entityRepository.findEntityByBgmIdAndType(otherName.getCompanyId(), "AnimeCompany")));
+            }
+        }
+        //搜索导演
+        List<AnimeDirector> directorList = animeDirectorRepository.findAnimeDirectorByNameLike(name);
+        if(directorList!=null && directorList.size()>0){
+            for(AnimeDirector director:directorList){
+                res.add(getEntity(entityRepository.findEntityByBgmIdAndType(director.getDirectorId(), "AnimeDirector")));
+            }
+        }else{
+            List<AnimeDirector> otherNames = animeDirectorRepository.findAnimeDirectorByOtherNamesContaining(name);
+            for(AnimeDirector otherName:otherNames){
+                res.add(getEntity(entityRepository.findEntityByBgmIdAndType(otherName.getDirectorId(), "AnimeDirector")));
+            }
+        }
+        return res;
+    }
+
+    /*
+    //方法过时了 不再使用
+    @Override
     public Set<String> fuzzySearch(String condition) {
         if (condition == null) return null;
         Set<String> res = new HashSet<>(); //长度>=3
@@ -288,5 +356,5 @@ public class EntityServiceImpl implements EntityService {
             }
         }
         return res;
-    }
+    }*/
 }

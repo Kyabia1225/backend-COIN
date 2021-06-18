@@ -181,6 +181,8 @@ public class RelationServiceImpl implements RelationService {
         return relationVOSet;
     }
 
+    /*
+    //方法过时不再使用
     @Override
     public Set<String> fuzzySearch(String condition) {
         if(condition.isEmpty()) return null;
@@ -192,5 +194,5 @@ public class RelationServiceImpl implements RelationService {
             }
         }
         return res;
-    }
+    }*/
 }
