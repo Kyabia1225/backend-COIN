@@ -196,7 +196,7 @@ public class serviceTest {
     }
     @Test
     public void testQ_26() throws Exception {
-        String answer = questionService.answer("漩涡鸣人出演的动画有哪些");
+        String answer = questionService.answer("佐助出演的动画有哪些");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
     }
