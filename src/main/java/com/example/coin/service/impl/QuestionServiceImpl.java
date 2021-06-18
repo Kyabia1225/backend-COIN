@@ -377,6 +377,7 @@ public class QuestionServiceImpl implements QuestionService {
                 for(String otherName:CV.getOtherNames()){
                     stringBuilder.append(otherName).append(" ");
                 }
+                stringBuilder.append("\n");
             }
             return stringBuilder.toString();
         }
@@ -444,6 +445,7 @@ public class QuestionServiceImpl implements QuestionService {
                 for(String otherName:direc.getOtherNames()){
                     stringBuilder.append(otherName).append(" ");
                 }
+                stringBuilder.append("\n");
             }
             return stringBuilder.toString();
         }
@@ -511,6 +513,7 @@ public class QuestionServiceImpl implements QuestionService {
                 for(String otherName:chara.getOtherNames()){
                     stringBuilder.append(otherName).append(" ");
                 }
+                stringBuilder.append("\n");
             }
             return stringBuilder.toString();
         }
