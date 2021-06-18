@@ -413,7 +413,8 @@ public class QuestionServiceImpl implements QuestionService {
                 stringBuilder.append("查询到以下").append(cvList.size()).append("个声优结果: \n\n");
             }
             for(AnimeCV CV:cvList){
-                stringBuilder.append(CV.getName()).append("信息如下:\n").append(CV.getDescription()).append("\n");
+                stringBuilder.append(CV.getName()).append("是一名声优, ");
+                stringBuilder.append("信息如下:\n").append(CV.getDescription()).append("\n");
             }
             return stringBuilder.toString();
         }
@@ -535,11 +536,18 @@ public class QuestionServiceImpl implements QuestionService {
             return UNFOUND;
         }
         StringBuilder res= new StringBuilder();
-        res.append("查询到以下").append(String.valueOf(charas.size())).append("个结果\n");
+        res.append("查询到以下").append(charas.size()).append("个结果\n");
         for(AnimeCharacter chara:charas){
             res.append("角色名: ").append(chara.getName()).append("\n");
+            res.append("角色在以下作品中出场:");
+            for(String eid:entityRepository.findEntityByBgmIdAndType(chara.getCharacterId(), "AnimeCharacter").getRelatesTo().values()){
+                Entity e = entityRepository.findEntityById(eid);
+                if(e.getType().equals("Anime")){
+                    res.append(e.getName()).append(" ");
+                }
+            }
+            res.append("\n");
             res.append("角色介绍:").append(chara.getDescription()).append("\n");
-            //TODO 加入出自作品
         }
         return res.toString();
     }
@@ -797,29 +805,7 @@ public class QuestionServiceImpl implements QuestionService {
         }
         return res.toString();
     }
-    private String getAnimeDirectors(String anime){
-        StringBuilder res= new StringBuilder();
-        List<Anime> animes=animeRepository.findAnimeByTitleLike(anime);
-        List<Anime> animes2=animeRepository.findAnimeByJapaneseNameLike(anime);
-        animes.addAll(animes2);
-        animes = animes.stream().distinct().collect(Collectors.toList());
-        if(animes.size() == 0){
-            return UNFOUND;
-        }
-        res.append("查询到以下").append(String.valueOf(animes.size())).append("个结果\n");
-        for(Anime ani:animes){
-            Entity e=entityRepository.findEntityByBgmIdAndType(ani.getAnimeId(),"Anime");
-            Set<Map.Entry<String,String>> entries=e.getRelatesTo().entrySet();
-            res.append("动画").append(ani.getTitle()).append("的导演是:").append("\n");
-            for(Map.Entry entry:entries){
-                if(relationRepository.findRelationById(entry.getKey().toString()).getRelation().equals("导演")){
-                    res.append(entityRepository.findEntityById(entry.getValue().toString()).getName()).append(" ");
-                }
-            }
-            res.append("\n");
-        }
-        return res.toString();
-    }
+
     private String getScoreHigherThanXAnime(String score){
         System.out.println(score);
         StringBuilder res= new StringBuilder();
