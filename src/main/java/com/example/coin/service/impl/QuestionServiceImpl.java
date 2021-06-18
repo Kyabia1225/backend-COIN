@@ -9,10 +9,8 @@ import com.example.coin.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -528,6 +526,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCharacter> c=animeCharacterRepository.findAnimeCharacterByName(character);
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(c);
+        charas = charas.stream().distinct().collect(Collectors.toList());
         if(charas.size() == 0){
             return UNFOUND;
         }
@@ -544,6 +543,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCharacter> c=animeCharacterRepository.findAnimeCharacterByName(character);
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(c);
+        charas = charas.stream().distinct().collect(Collectors.toList());
         if(charas.size() == 0){
             return UNFOUND;
         }
@@ -560,6 +560,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCompany> companies1=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
         StringBuilder res= new StringBuilder();
         companies.addAll(companies1);
+        companies = companies.stream().distinct().collect(Collectors.toList());
         if(companies.size() == 0){
             return UNFOUND;
         }
@@ -579,6 +580,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCompany> companies1=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
         StringBuilder res= new StringBuilder();
         companies.addAll(companies1);
+        companies = companies.stream().distinct().collect(Collectors.toList());
         if(companies.size() == 0){
             return UNFOUND;
         }
@@ -618,6 +620,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCV> cvs=animeCVRepository.findAnimeCVByNameLike(cvName);
         List<AnimeCV> cvs2=animeCVRepository.findAnimeCVByOtherNamesContaining(cvName);
         cvs.addAll(cvs2);
+        cvs = cvs.stream().distinct().collect(Collectors.toList());
         if(cvs.size() == 0){
             return UNFOUND;
         }
@@ -645,6 +648,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCV> cvs=animeCVRepository.findAnimeCVByNameLike(cvName);
         List<AnimeCV> cvs2=animeCVRepository.findAnimeCVByOtherNamesContaining(cvName);
         cvs.addAll(cvs2);
+        cvs = cvs.stream().distinct().collect(Collectors.toList());
         if(cvs.size() == 0){
             return UNFOUND;
         }
@@ -674,6 +678,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharacterByNameLike(character);
         List<AnimeCharacter> charas2=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(charas2);
+        charas = charas.stream().distinct().collect(Collectors.toList());
         if(charas.size() == 0){
             return UNFOUND;
         }
@@ -695,6 +700,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCharacter> charas=animeCharacterRepository.findAnimeCharacterByNameLike(character);
         List<AnimeCharacter> charas2=animeCharacterRepository.findAnimeCharactersByOtherNamesContaining(character);
         charas.addAll(charas2);
+        charas = charas.stream().distinct().collect(Collectors.toList());
         if(charas.size() == 0){
             return UNFOUND;
         }
@@ -723,6 +729,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeCompany> comps=animeCompanyRepository.findAnimeCompanyByNameLike(company);
         List<AnimeCompany> comps2=animeCompanyRepository.findAnimeCompanyByOtherNamesContaining(company);
         comps.addAll(comps2);
+        comps = comps.stream().distinct().collect(Collectors.toList());
         if(comps.size() == 0){
             return UNFOUND;
         }
@@ -745,6 +752,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<AnimeDirector> dirs=animeDirectorRepository.findAnimeDirectorByNameLike(director);
         List<AnimeDirector> dirs2=animeDirectorRepository.findAnimeDirectorByOtherNamesContaining(director);
         dirs.addAll(dirs2);
+        dirs = dirs.stream().distinct().collect(Collectors.toList());
         if(dirs.size() == 0){
             return UNFOUND;
         }
@@ -767,6 +775,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<Anime> animes=animeRepository.findAnimeByTitleLike(anime);
         List<Anime> animes2=animeRepository.findAnimeByJapaneseNameLike(anime);
         animes.addAll(animes2);
+        animes = animes.stream().distinct().collect(Collectors.toList());
         if(animes.size() == 0){
             return UNFOUND;
         }
@@ -789,6 +798,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<Anime> animes=animeRepository.findAnimeByTitleLike(anime);
         List<Anime> animes2=animeRepository.findAnimeByJapaneseNameLike(anime);
         animes.addAll(animes2);
+        animes = animes.stream().distinct().collect(Collectors.toList());
         if(animes.size() == 0){
             return UNFOUND;
         }
@@ -838,6 +848,7 @@ public class QuestionServiceImpl implements QuestionService {
     private String getCVandCVCooperateAnime(String cv1, String cv2){
         return "";
     }
+
 
 }
 

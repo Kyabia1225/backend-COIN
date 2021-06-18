@@ -154,13 +154,13 @@ public class serviceTest {
     }
     @Test
     public void testQ_19() throws Exception {
-        String answer = questionService.answer("松雪集是谁");
+        String answer = questionService.answer("佐助是谁");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
     }
     @Test
     public void testQ_20() throws Exception {
-        String answer = questionService.answer("小木曾雪菜生日是什么时候");
+        String answer = questionService.answer("姬柊雪菜生日是什么时候");
         System.out.println("_______________________________________________________________________");
         System.out.println(answer);
     }
