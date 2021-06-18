@@ -1,6 +1,8 @@
 package com.example.coin.service.impl;
 
+import com.example.coin.DAO.*;
 import com.example.coin.core.CoreProcessor;
+import com.example.coin.po.Anime;
 import com.example.coin.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,11 +13,20 @@ import java.util.List;
 public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private CoreProcessor coreProcessor;
-
+    @Autowired
+    private AnimeRepository animeRepository;
+    @Autowired
+    private AnimeCharacterRepository animeCharacterRepository;
+    @Autowired
+    private AnimeCVRepository animeCVRepository;
+    @Autowired
+    private AnimeCompanyRepository animeCompanyRepository;
+    @Autowired
+    private AnimeDirectorRepository animeDirectorRepository;
     @Override
     public String answer(String question) throws Exception {
         List<String> strings = coreProcessor.analysis(question);
-        int index=Integer.parseInt(strings.get(0));
+        int index=Integer.parseInt(strings.get(0))-1;
         String answer="";
         switch(index){
             case 0:
@@ -173,13 +184,50 @@ public class QuestionServiceImpl implements QuestionService {
 
     private String getAnimeScore(String anime){
         //1:anime 评分
-        return "";
+        List<Anime> animes = animeRepository.findAnimeByTitleLike(anime);
+        int size = animes.size();
+        if(size == 0){
+            return "没有查找到相关结果。";
+        }else if(size == 1){
+            return anime+" 的评分是"+animes.get(0).getScore();
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("查询到以下").append(size).append("个结果: \n");
+            for(Anime foundAnime:animes){
+                stringBuilder.append(foundAnime.getTitle()).append(" 的评分是").append(foundAnime.getScore()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getAnimeStartDate(String anime){
-        return "";
+        List<Anime> animes = animeRepository.findAnimeByTitleLike(anime);int size = animes.size();
+        if(size == 0){
+            return "没有查找到相关结果。";
+        }else if(size == 1) {
+            return anime + " 的放送日期是" + animes.get(0).getStartDate();
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("查询到以下").append(size).append("个结果: \n");
+            for(Anime foundAnime:animes) {
+                stringBuilder.append(foundAnime.getTitle()).append(" 的放送日期是").append(foundAnime.getStartDate()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getAnimeOtherNames(String anime){
-        return "";
+        List<Anime> animes = animeRepository.findAnimeByTitleLike(anime);int size = animes.size();
+        if(size == 0){
+            return "没有查找到相关结果。";
+        }else if(size == 1) {
+            return anime + " 的日文名是" + animes.get(0).getJapaneseName();
+        }else{
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("查询到以下").append(size).append("个结果: \n");
+            for(Anime foundAnime:animes) {
+                stringBuilder.append(foundAnime.getTitle()).append(" 的日文名是").append(foundAnime.getJapaneseName()).append("\n");
+            }
+            return stringBuilder.toString();
+        }
     }
     private String getLength(String anime){
         return "";

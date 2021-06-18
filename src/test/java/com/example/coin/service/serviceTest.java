@@ -22,9 +22,9 @@ import java.util.Map;
 import java.util.Set;
 
 @SpringBootTest
+@Ignore
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
 public class serviceTest {
     @Autowired
     private EntityService entityService;
@@ -39,11 +39,7 @@ public class serviceTest {
     @Autowired
     private AnimeCharacterRepository animeCharacterRepository;
     @Autowired
-    private AnimeDirectorRepository animeDirectorRepository;
-    @Autowired
-    private AnimeCVRepository animeCVRepository;
-    @Autowired
-    private AnimeCompanyRepository animeCompanyRepository;
+    private QuestionService questionService;
 
     @Test
     public void test01(){
@@ -145,5 +141,12 @@ public class serviceTest {
     public void test11(){
         List<EntityVO> associatedEntities = entityService.getAssociatedEntities("60bce771b138d704caa70619");
         System.out.println(associatedEntities);
+    }
+
+    @Test
+    public void test12() throws Exception {
+        String answer = questionService.answer("灼眼的夏娜什么时候开始播的");
+        System.out.println("_______________________________________________________________________");
+        System.out.println(answer);
     }
 }
